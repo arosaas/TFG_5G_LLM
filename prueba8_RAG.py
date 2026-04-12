@@ -3,7 +3,7 @@ from google.genai import types
 import os
 import numpy as np
 import time
-
+from fpdf import FPDF
 
 client = genai.Client()
 
@@ -126,9 +126,27 @@ def chat_terminal():
                 contents=prompt_rag_final,
                 config=configuration_rol
             )
-            print(f"\nGemini:\n{response.text}")
+            #print(f"\nGemini:\n{response.text}")
             
+            # GENERACIÓN ARCHIVO EN PDF
             
+            print(f"\nGemini: Exportando configuración a archivo PDF")
+            
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_auto_page_break(auto=True, margin=15)
+            pdf.set_font("Courier", size=9)
+            
+            texto_yaml = response.text.replace("```yaml", "").replace("```", "").strip()
+            
+            for linea in texto_yaml.split('\n'):
+                linea_segura = linea.encode('latin-1', 'replace').decode('latin-1')
+                pdf.cell(0, 5, txt=linea_segura, ln=True)
+            
+            nombre_pdf = f"config_open5gs_{int(time.time())}.pdf"
+            pdf.output(nombre_pdf)
+            
+            print(f"PDF generado con exito. Guardado como: {nombre_pdf}")
             
         except Exception as e:
             print(f"\nError de API: {e}")
