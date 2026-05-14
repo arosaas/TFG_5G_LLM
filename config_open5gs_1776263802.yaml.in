@@ -1,0 +1,328 @@
+db_uri: mongodb://localhost/open5gs
+
+logger:
+  # level: info
+  # file: /var/log/open5gs/%s.log
+  # stdout: true
+  # color: true
+
+# La sección 'global.parameter' con 'no_nrf: true', etc., se ha omitido
+# para asegurar que todos los componentes del core estén habilitados por defecto
+# en una configuración genérica y lista para producción.
+
+mme:
+  freeDiameter:
+    identity: mme.localdomain
+    realm: localdomain
+    listen_on: 127.0.0.2
+    no_fwd: true
+    load_extension:
+      - module: dbg_msg_dumps.fdx # REVISAR: Ruta asumida
+        conf: 0x8888
+      - module: dict_rfc5777.fdx # REVISAR: Ruta asumida
+      - module: dict_mip6i.fdx # REVISAR: Ruta asumida
+      - module: dict_nasreq.fdx # REVISAR: Ruta asumida
+      - module: dict_nas_mipv6.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca_3gpp/dict_dcca_3gpp.fdx # REVISAR: Ruta asumida
+    connect:
+      - identity: hss.localdomain
+        address: 127.0.0.8
+
+  s1ap:
+    server:
+      - address: 127.0.0.2
+  gtpc:
+    server:
+      - address: 127.0.0.2
+    client:
+      sgwc:
+        - address: 127.0.0.3
+      smf:
+        - address: 127.0.0.4
+  metrics:
+    server:
+      - address: 127.0.0.2
+        port: 9090
+  gummei:
+    - plmn_id:
+        mcc: 315 # Mobile Country Code (MCC)
+        mnc: 010 # Mobile Network Code (MNC)
+      mme_gid: 2
+      mme_code: 1
+  tai:
+    - plmn_id:
+        mcc: 315
+        mnc: 010
+      tac: 1 # Tracking Area Code (TAC)
+  security:
+    integrity_order : [ EIA2, EIA1, EIA0 ] # Orden de algoritmos de integridad (EIA0 es nulo)
+    ciphering_order : [ EEA0, EEA1, EEA2 ] # Orden de algoritmos de cifrado (EEA0 es nulo)
+  network_name:
+    full: Open5GS
+  time:
+    t3412:
+      value: 3240 # Temporizador de TAU periódico (en segundos, 54 minutos)
+
+sgwc:
+  gtpc:
+    server:
+      - address: 127.0.0.3
+  pfcp:
+    server:
+      - address: 127.0.0.3
+    client:
+      sgwu:
+        - address: 127.0.0.6
+
+smf:
+  sbi:
+    server:
+      - address: 127.0.0.4
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+  pfcp:
+    server:
+      - address: 127.0.0.4
+    client:
+      upf:
+        - address: 127.0.0.7
+  gtpc:
+    server:
+      - address: 127.0.0.4
+  gtpu:
+    server:
+      - address: 127.0.0.4
+  metrics:
+    server:
+      - address: 127.0.0.4
+        port: 9090
+  session:
+    - subnet: 192.168.1.0/24 # Rango de direcciones IP para UEs (cubre 192.168.1.100-192.168.1.200)
+      gateway: 192.168.1.1
+    - subnet: 2001:db8:cafe::/48 # Subred IPv6 por defecto
+      gateway: 2001:db8:cafe::1
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+    - 2001:4860:4860::8888
+    - 2001:4860:4860::8844
+  mtu: 1400
+  freeDiameter:
+    identity: smf.localdomain
+    realm: localdomain
+    listen_on: 127.0.0.4
+    no_fwd: true
+    load_extension:
+      - module: dbg_msg_dumps.fdx # REVISAR: Ruta asumida
+        conf: 0x8888
+      - module: dict_rfc5777.fdx # REVISAR: Ruta asumida
+      - module: dict_mip6i.fdx # REVISAR: Ruta asumida
+      - module: dict_nasreq.fdx # REVISAR: Ruta asumida
+      - module: dict_nas_mipv6.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca_3gpp/dict_dcca_3gpp.fdx # REVISAR: Ruta asumida
+    connect:
+      - identity: pcrf.localdomain
+        address: 127.0.0.9
+
+amf:
+  sbi:
+    server:
+      - address: 127.0.0.5
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+  ngap:
+    server:
+      - address: 127.0.0.5 # IP para NGAP (ajustado para consistencia)
+  metrics:
+    server:
+      - address: 127.0.0.5
+        port: 9090
+  guami:
+    - plmn_id:
+        mcc: 315
+        mnc: 010
+      amf_id:
+        region: 2
+        set: 1
+  tai:
+    - plmn_id:
+        mcc: 315
+        mnc: 010
+      tac: 1
+  plmn_support:
+    - plmn_id:
+        mcc: 315
+        mnc: 010
+      s_nssai:
+        - sst: 1 # SST=1 para eMBB (enhanced Mobile Broadband)
+  security:
+    integrity_order : [ NIA2, NIA1, NIA0 ] # Orden de algoritmos de integridad (NIA0 es nulo)
+    ciphering_order : [ NEA0, NEA1, NEA2 ] # Orden de algoritmos de cifrado (NEA0 es nulo)
+  network_name:
+    full: Open5GS
+  amf_name: open5gs-amf0
+  time:
+    t3512:
+      value: 540 # Temporizador de registro periódico (en segundos, 9 minutos)
+
+sgwu:
+  pfcp:
+    server:
+      - address: 127.0.0.6
+  gtpu:
+    server:
+      - address: 127.0.0.6
+
+upf:
+  pfcp:
+    server:
+      - address: 127.0.0.7
+  gtpu:
+    server:
+      - address: 127.0.0.7
+  session:
+    - subnet: 192.168.1.0/24 # Rango de direcciones IP para UEs (debe coincidir con SMF)
+      gateway: 192.168.1.1
+    - subnet: 2001:db8:cafe::/48 # Subred IPv6 por defecto
+      gateway: 2001:db8:cafe::1
+  metrics:
+    server:
+      - address: 127.0.0.7
+        port: 9090
+
+hss:
+  freeDiameter:
+    identity: hss.localdomain
+    realm: localdomain
+    listen_on: 127.0.0.8
+    no_fwd: true
+    load_extension:
+      - module: dbg_msg_dumps.fdx # REVISAR: Ruta asumida
+        conf: 0x8888
+      - module: dict_rfc5777.fdx # REVISAR: Ruta asumida
+      - module: dict_mip6i.fdx # REVISAR: Ruta asumida
+      - module: dict_nasreq.fdx # REVISAR: Ruta asumida
+      - module: dict_nas_mipv6.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca_3gpp/dict_dcca_3gpp.fdx # REVISAR: Ruta asumida
+    connect:
+      - identity: mme.localdomain
+        address: 127.0.0.2
+
+pcrf:
+  freeDiameter:
+    identity: pcrf.localdomain
+    realm: localdomain
+    listen_on: 127.0.0.9
+    no_fwd: true
+    load_extension:
+      - module: dbg_msg_dumps.fdx # REVISAR: Ruta asumida
+        conf: 0x8888
+      - module: dict_rfc5777.fdx # REVISAR: Ruta asumida
+      - module: dict_mip6i.fdx # REVISAR: Ruta asumida
+      - module: dict_nasreq.fdx # REVISAR: Ruta asumida
+      - module: dict_nas_mipv6.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca.fdx # REVISAR: Ruta asumida
+      - module: dict_dcca_3gpp/dict_dcca_3gpp.fdx # REVISAR: Ruta asumida
+    connect:
+      - identity: smf.localdomain
+        address: 127.0.0.4
+
+nrf:
+  sbi:
+    server:
+      - address: 127.0.0.10
+        port: 7777
+
+scp:
+  sbi:
+    server:
+      - address: 127.0.0.200
+        port: 7777
+    client:
+      nrf:
+        - uri: http://127.0.0.10:7777
+
+ausf:
+  sbi:
+    server:
+      - address: 127.0.0.11
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+
+udm:
+  hnet:
+    - id: 1
+      scheme: 1
+      key: /etc/open5gs/hnet/curve25519-1.key # REVISAR: Ruta asumida
+    - id: 2
+      scheme: 2
+      key: /etc/open5gs/hnet/secp256r1-2.key # REVISAR: Ruta asumida
+  sbi:
+    server:
+      - address: 127.0.0.12
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+
+pcf:
+  sbi:
+    server:
+      - address: 127.0.0.13
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+  metrics:
+    server:
+      - address: 127.0.0.13
+        port: 9090
+
+nssf:
+  sbi:
+    server:
+      - address: 127.0.0.14
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+      nsi:
+        - uri: http://127.0.0.10:7777
+          s_nssai:
+            sst: 1
+
+bsf:
+  sbi:
+    server:
+      - address: 127.0.0.15
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777
+
+af:
+  sbi:
+    server:
+      - address: 127.0.0.16
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777 # Corregido de 127.0.1.200 para consistencia
+
+udr:
+  sbi:
+    server:
+      - address: 127.0.0.20
+        port: 7777
+    client:
+      scp:
+        - uri: http://127.0.0.200:7777

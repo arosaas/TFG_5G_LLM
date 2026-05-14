@@ -56,9 +56,9 @@ def chat_terminal():
         "/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-315-010-ue-315-010.yaml.in",
         "/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-315-010-ue-999-70.yaml.in",
         "/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-999-70-ue-001-01.yaml.in",
-        #"/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-999-70-ue-315-010.yaml.in",
-        #"/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-999-70-ue-999-70.yaml.in",
-        #"/home/alejandroro/Escritorio/TFG/CONFIGS/gnb_rf_b210_fdd_srsUE.yml"
+        "/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-999-70-ue-315-010.yaml.in",
+        "/home/alejandroro/Escritorio/TFG/CONFIGS/gnb-999-70-ue-999-70.yaml.in",
+        "/home/alejandroro/Escritorio/TFG/CONFIGS/gnb_rf_b210_fdd_srsUE.yml"
     ]
 
     bd_vectorial = []
@@ -83,7 +83,7 @@ def chat_terminal():
                 "vector": vector
             })
             print(f" Vectorizado: {os.path.basename(ruta)}")
-            time.sleep(3)
+            time.sleep(15)  # Pausa para evitar límites de tasa de la API
         else:
             print(f" No encontrado: {os.path.basename(ruta)}")
 
