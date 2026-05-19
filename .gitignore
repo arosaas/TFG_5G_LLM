@@ -1,3 +1,21 @@
 __pycache__/
 credentials.json
 token.json
+
+# Entorno virtual
+TFG/
+
+# Repositorios externos
+srsRAN_4G/
+srsRAN_Project/
+oran-sc-ric/
+
+# Documentos
+CONFIGS/2406.01485v1.pdf
+CONFIGS/1285613.pdf
+CONFIGS/2677046.2677053.pdf
+CONFIGS/AI-Driven_Zero_Touch_Network_and_Service_Management_in_5G_and_Beyond_Challenges_and_Research_Directions.pdf
+CONFIGS/Comparative E2E Performance Analysis of O-RAN_0ADesigns in a 5G Standalone Testbed.pdf
+CONFIGS/Control_Plane_Performance_Benchmarking_and_Feature_Analysis_of_Popular_Open-Source_5G_Core_Networks_OpenAirInterface_Open5GS_and_free5GC.pdf
+CONFIGS/getPDF.jsp
+
