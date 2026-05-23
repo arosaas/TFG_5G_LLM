@@ -1,0 +1,67 @@
+# This configuration file example shows how to configure the srsRAN Project gNB to allow srsUE to connect to it.
+# This specific example uses ZMQ in place of a USRP for the RF-frontend, and creates an FDD cell with 20 MHz bandwidth.
+# To run the srsRAN Project gNB with this config, use the following command:
+#   sudo ./gnb -c gnb_zmq.yaml
+
+cu_cp:
+  amf:
+    addr: 10.53.1.2               # La dirección IP del AMF (Open5GS).
+    port: 38412
+    bind_addr: 10.53.1.3            # Una IP local a la que el gNB se enlaza para el tráfico del AMF.
+    supported_tracking_areas:
+      - tac: 7
+        plmn_list:
+          - plmn: "315010"          # PLMN difundido por el gNB (MCC 315, MNC 010).
+            tai_slice_support_list:
+              - sst: 4              # Valor SST estandarizado para servicios V2X (3GPP TS 23.501, Tabla 5.15.2.2-1, Pag 199).
+  inactivity_timer: 7200            # Establece el temporizador de inactividad de UE/Sesión PDU/DRB en 7200 segundos. Soportado: [1 - 7200].
+
+ru_sdr:
+  device_driver: zmq                # El nombre del driver RF.
+  device_args: tx_port=tcp://127.0.0.1:2000,rx_port=tcp://127.0.0.1:2001,base_srate=23.04e6 # Puertos ZMQ para el gNB (TX al UE 2001, RX del UE 2000).
+  srate: 23.04                      # La tasa de muestreo RF (23.04 Msps para 20 MHz de ancho de banda).
+  tx_gain: 75                       # Ganancia de transmisión RF.
+  rx_gain: 75                       # Ganancia de recepción RF.
+
+cell_cfg:
+  dl_arfcn: 368500                  # ARFCN del portador de enlace descendente (frecuencia central).
+  band: 3                           # La banda NR.
+  channel_bandwidth_MHz: 20         # Ancho de banda en MHz. El número de PRBs se derivará automáticamente (106 PRBs para 15kHz SCS).
+  common_scs: 15                    # Espaciado de subportadoras en kHz utilizado para datos.
+  plmn: "315010"                    # PLMN difundido por el gNB (MCC 315, MNC 010).
+  tac: 7                            # Código de área de seguimiento (debe coincidir con la configuración del core).
+  pdcch:
+    common:
+      ss0_index: 0                  # Índice del espacio de búsqueda cero para coincidir con las capacidades del srsUE.
+      coreset0_index: 12            # Índice CORESET Cero para coincidir con las capacidades del srsUE (para 20MHz).
+    dedicated:
+      ss2_type: common              # Tipo de espacio de búsqueda, debe establecerse en común.
+      dci_format_0_1_and_1_1: false # Establece el formato DCI correcto (fallback).
+  prach:
+    prach_config_index: 1           # Establece la configuración PRACH para coincidir con lo esperado por el srsUE.
+  pdsch:
+    mcs_table: qam64                # Establece el MCS PDSCH en 64 QAM.
+  pusch:
+    mcs_table: qam64                # Establece el MCS PUSCH en 64 QAM.
+
+log:
+  filename: /tmp/gnb.log            # Ruta del archivo de registro.
+  all_level: info                   # Nivel de registro aplicado a todas las capas.
+  hex_max_size: 0
+
+pcap:
+  mac_enable: false                 # Establecer en true para habilitar PCAPs de capa MAC.
+  mac_filename: /tmp/gnb_mac.pcap   # Ruta donde se almacena el PCAP MAC.
+  ngap_enable: false                # Establecer en true para habilitar PCAPs NGAP.
+  ngap_filename: /tmp/gnb_ngap.pcap # Ruta donde se almacena el PCAP NGAP.
+  e2ap_enable: true                 # Establecer en true para habilitar PCAPs E2AP.
+  e2ap_du_filename: /tmp/gnb_du_e2ap.pcap        # Ruta donde se almacena el PCAP E2AP del DU.
+  e2ap_cu_cp_filename: /tmp/gnb_cu_cp_e2ap.pcap  # Ruta donde se almacena el PCAP E2AP del CU-CP.
+  e2ap_cu_up_filename: /tmp/gnb_cu_up_e2ap.pcap  # Ruta donde se almacena el PCAP E2AP del CU-UP.
+
+metrics:
+  layers:
+    enable_rlc: true                # Habilitar métricas RLC.
+    enable_sched: true              # Habilitar métricas del planificador DU.
+  periodicity:
+    du_report_period: 1000          # Establecer el período de informe de estadísticas del DU en 1s.

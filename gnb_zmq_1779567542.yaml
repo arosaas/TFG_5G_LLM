@@ -1,0 +1,72 @@
+# gnb_v2x.yml
+#
+# This configuration file sets up the srsRAN Project gNB for V2X communications
+# using ZeroMQ as the RF frontend, connecting to an Open5GS core.
+#
+# To run the srsRAN Project gNB with this config, use the following command:
+#   sudo ./gnb -c gnb_v2x.yml
+
+cu_cp:
+  amf:
+    addr: 10.53.1.2               # The address or hostname of the AMF (Open5GS).
+    port: 38412                   # Standard N2 port for AMF.
+    bind_addr: 10.53.1.3            # A local IP that the gNB binds to for traffic from the AMF.
+    supported_tracking_areas:
+      - tac: 7                      # Tracking Area Code (TAC) - must match core configuration.
+        plmn_list:
+          - plmn: "31501"           # PLMN broadcasted by the gNB (MCC 315, MNC 010).
+            tai_slice_support_list:
+              - sst: 4              # Slice/Service Type (SST) for V2X services.
+                                    # From 3GPP TS 23.501 v16.6.0, Table 5.15.2.2-1, Page 199.
+  inactivity_timer: 7200            # Sets the UE/PDU Session/DRB inactivity timer to 7200 seconds.
+
+ru_sdr:
+  device_driver: zmq                # The RF driver name, using ZeroMQ for virtual RF.
+  device_args: tx_port=tcp://127.0.0.1:2000,rx_port=tcp://127.0.0.1:2001,base_srate=23.04e6 # ZMQ ports for gNB (tx:2000, rx:2001). Base sample rate for 20MHz BW.
+  srate: 23.04                      # RF sample rate in Msps, adjusted for 20 MHz bandwidth.
+  tx_gain: 75                       # Transmit gain of the RF.
+  rx_gain: 75                       # Receive gain of the RF.
+
+cell_cfg:
+  dl_arfcn: 620000                  # ARFCN of the downlink carrier (center frequency).
+                                    # For Band 78, ARFCN 620000 is within the valid range (620000-673333).
+  band: 78                          # The NR band, n78 (3.3-4.2 GHz).
+  channel_bandwidth_MHz: 20         # Bandwidth in MHz. Number of PRBs will be automatically derived.
+  common_scs: 15                    # Subcarrier spacing in kHz used for data.
+  plmn: "31501"                     # PLMN broadcasted by the gNB (MCC 315, MNC 010).
+  tac: 7                            # Tracking area code (needs to match the core configuration).
+  pdcch:
+    common:
+      ss0_index: 0                  # Set search space zero index to match srsUE capabilities.
+      coreset0_index: 12            # Set search CORESET Zero index to match srsUE capabilities for 20MHz.
+    dedicated:
+      ss2_type: common              # Search Space type, has to be set to common.
+      dci_format_0_1_and_1_1: false # Set correct DCI format (fallback).
+  prach:
+    prach_config_index: 1           # Sets PRACH config to match what is expected by srsUE.
+  pdsch:
+    mcs_table: qam64                # Sets PDSCH MCS to 64 QAM.
+  pusch:
+    mcs_table: qam64                # Sets PUSCH MCS to 64 QAM.
+
+log:
+  filename: /tmp/gnb.log            # Path of the log file.
+  all_level: info                   # Logging level applied to all layers.
+  hex_max_size: 0
+
+pcap:
+  mac_enable: false                 # Set to true to enable MAC-layer PCAPs.
+  mac_filename: /tmp/gnb_mac.pcap   # Path where the MAC PCAP is stored.
+  ngap_enable: false                # Set to true to enable NGAP PCAPs.
+  ngap_filename: /tmp/gnb_ngap.pcap # Path where the NGAP PCAP is stored.
+  e2ap_enable: true                 # Set to true to enable E2AP PCAPs.
+  e2ap_du_filename: /tmp/gnb_du_e2ap.pcap        # Path where the DU E2AP PCAP is stored.
+  e2ap_cu_cp_filename: /tmp/gnb_cu_cp_e2ap.pcap  # Path where the CU-CP E2AP PCAP is stored.
+  e2ap_cu_up_filename: /tmp/gnb_cu_up_e2ap.pcap  # Path where the CU-UP E2AP PCAP is stored.
+
+metrics:
+  layers:
+    enable_rlc: true                # Enable RLC metrics.
+    enable_sched: true              # Enable DU scheduler metrics.
+  periodicity:
+    du_report_period: 1000          # Set DU statistics report period to 1s.
