@@ -11,7 +11,10 @@ from fpdf import FPDF
 import PyPDF2
 import pickle
 
-client = genai.Client()
+# IR INTERCAMABIANDO API_KEY CADA VEZ QUE SE USE UNO O EL OTRO export GEMINI_API_KEY=AIzaSyBVNuTRpxSQiFIYSTe-2QWrMIoYC2w0zMo
+# export GEMINI_API_KEY=AIzaSyBmUXGAYVIyT3rj4neAR6eUjk1RRjVLG7k
+
+client = genai.Client(api_key="AIzaSyBVNuTRpxSQiFIYSTe-2QWrMIoYC2w0zMo")
 
 model_gen = "gemini-2.5-flash"
 model_emb = "gemini-embedding-001"  
@@ -34,8 +37,7 @@ def chat_terminal():
         "/home/alejandroro/TFG_5G_LLM/CONFIGS/docker-compose.yml",
         "/home/alejandroro/TFG_5G_LLM/CONFIGS/gnb_zmq.yaml",
         "/home/alejandroro/TFG_5G_LLM/CONFIGS/ue_zmq.conf",
-
-            ]
+    ]
 
     contexto_cag = ""
 
@@ -51,7 +53,6 @@ def chat_terminal():
 
     # Inyección del contenido del CAG en el prompt del sistema, junto al rol
     # y demás instrucciones para la generación correcta de las configuraciones.
-
 
     prompt_v2 = f"""
         # ROL
@@ -82,8 +83,8 @@ def chat_terminal():
         - OBLIGATORIO: Asegúrate de que el canal de frecuencia (dl_arfcn) corresponda exactamente con la banda (band) elegida. Nunca mezcles bandas. Por ejemplo, si usas la Banda 3, el dl_arfcn debe estar estrictamente entre 361000 y 376000. Si decides usar el dl_arfcn 620000, asegúrate de configurar la banda 78.
         - OBLIGATORIO: En el archivo docker-compose.yml, debes asignar estáticamente las direcciones IP (usando 'ipv4_address') a cada contenedor para que coincidan con las configuradas en los archivos del gNB y el UE.
         - OBLIGATORIO: El valor de "common_scs" y el de "ssb_scs" (o cualquier referencia al Sub-Carrier Spacing del SSB) DEBEN SER EXACTAMENTE IGUALES en el archivo del gNB. srsRAN no soporta que sean diferentes.
-        - MUY IMPORTANTE (ERROR DE BIND UDP): En TODOS los archivos generados (tanto en el YAML del gNB principal como en el docker-compose.yml), CUALQUIER parámetro 'bind_addr' DEBE tener el valor exacto '0.0.0.0'. Bajo ningún concepto uses la IP 10.53.1.3 para los binds.
-- OBLIGATORIO: No alteres ni inventes parámetros de hardware de radio o tasas de muestreo. Debes copiar el bloque 'ru_sdr' (incluyendo los valores de 'srate' y 'device_args') EXACTAMENTE igual que como aparece en las plantillas base (CAG). Utiliza la teoría del RAG únicamente para la configuración lógica y de red (SST, PLMN, ARFCN), no para modificar la configuración física del SDR.
+        - MUY IMPORTANTE (ERROR DE BIND UDP): En TODOS los archivos generados (tanto en el YAML del gNB principal como en el docker-compose.yml). Bajo ningún concepto uses la IP 10.53.1.3 para los binds.
+        - OBLIGATORIO: No alteres ni inventes parámetros de hardware de radio o tasas de muestreo. Debes copiar el bloque 'ru_sdr' (incluyendo los valores de 'srate' y 'device_args') EXACTAMENTE igual que como aparece en las plantillas base (CAG). Utiliza la teoría del RAG únicamente para la configuración lógica y de red (SST, PLMN, ARFCN), no para modificar la configuración física del SDR.
 
         # FORMATO OBLIGATORIO DE SALIDA
         Estructura tu respuesta única y exclusivamente usando los siguientes bloques delimitadores. 
@@ -117,7 +118,17 @@ def chat_terminal():
     rutas_rag = [
         "/home/alejandroro/TFG_5G_LLM/CONFIGS/ts_123501v160600p.pdf",
         "/home/alejandroro/TFG_5G_LLM/CONFIGS/O-RAN.WG1.TR.Use-Cases-Analysis-Report-R005-v19.00-1.pdf",
-        "/home/alejandroro/TFG_5G_LLM/CONFIGS/ejemplos_configuraciones_5g.pdf"
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/ejemplos_configuraciones2_5g.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/ts_123501v150200p.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/ejemplos_configuraciones_5g.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/2406.01485v1.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/1285613.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/267704.2677053.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/AI-Driven_Zero_Touch_Network_and_Service_Management_in_5G_and_Beyond_Challenges_and_Research_Directions.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/Comparative E2E Performance Analysis of O-RAN_0ADesigns in a 5G Standalone Testbed.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/Control_Plane_Performance_Benchmarking_and_Feature_Analysis_of_Popular_Open-Source_5G_Core_Networks_OpenAirInterface_Open5GS_and_free5GC.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/getPDF.pdf",
+        "/home/alejandroro/TFG_5G_LLM/CONFIGS/LLM-enabled_Intent-driven_Service_Configuration_for_Next_Generation_Networks.pdf"
     ]       
 
     archivo_bd_local = "base_datos_5g_tfg.pkl"
@@ -134,36 +145,35 @@ def chat_terminal():
     # En caso de que no exista la base de datos, se extrae el contenido de 
     # los archivos que le hemos pasado.
 
-    
-        documentos_extraidos = []
-        print("  -> Verificando archivos fuente...")
-        for ruta in rutas_rag:
-            if not os.path.exists(ruta):
-                    continue
-            if ruta.lower().endswith('.pdf'):
-                    try:
-                        with open(ruta, 'rb') as f:
-                            lector_pdf = PyPDF2.PdfReader(f)
-                            for num_pagina, pagina in enumerate(lector_pdf.pages):
-                                texto_pagina = pagina.extract_text()
-                                if texto_pagina and texto_pagina.strip():
-                                    documentos_extraidos.append({
-                                        "nombre": f"{os.path.basename(ruta)} - Pag {num_pagina + 1}",
-                                        "texto": texto_pagina
-                                    })
-                    except Exception as e:
-                        pass
-            else:
-                    try:
-                        with open(ruta, 'r', encoding='utf-8') as f:
-                            contenido = f.read()
-                            if contenido and contenido.strip():
+    documentos_extraidos = []
+    print("  -> Verificando archivos fuente...")
+    for ruta in rutas_rag:
+        if not os.path.exists(ruta):
+                continue
+        if ruta.lower().endswith('.pdf'):
+                try:
+                    with open(ruta, 'rb') as f:
+                        lector_pdf = PyPDF2.PdfReader(f)
+                        for num_pagina, pagina in enumerate(lector_pdf.pages):
+                            texto_pagina = pagina.extract_text()
+                            if texto_pagina and texto_pagina.strip():
                                 documentos_extraidos.append({
-                                    "nombre": os.path.basename(ruta),
-                                    "texto": contenido
+                                    "nombre": f"{os.path.basename(ruta)} - Pag {num_pagina + 1}",
+                                    "texto": texto_pagina
                                 })
-                    except Exception as e:
-                        pass
+                except Exception as e:
+                    pass
+        else:
+                try:
+                    with open(ruta, 'r', encoding='utf-8') as f:
+                        contenido = f.read()
+                        if contenido and contenido.strip():
+                            documentos_extraidos.append({
+                                "nombre": os.path.basename(ruta),
+                                "texto": contenido
+                            })
+                except Exception as e:
+                    pass
 
     #  Filtrado de documentos ya vectorizados.
 
@@ -202,7 +212,7 @@ def chat_terminal():
                             pickle.dump(bd_vectorial, f)
                         print("  [+] Checkpoint guardado. Progreso a salvo.")
                     
-                    time.sleep(4) 
+#                    time.sleep(1) 
                 
                 # Excepción encargada de detectar los límites de rendimiento de la API,
                 # pausa la vectorización de los archivos de forma exponencial según el
