@@ -1,27 +1,11 @@
-# Clonamos repositorio de srsRAN_4G
-git clone https://github.com/srsRAN/srsRAN_4G.git
+# Creamos el enorno virtual
+python3 -m venv ./TFG
 
-# Cambiamos al directorio del proyecto
-cd srsRAN_4G
+# Activamos el entorno virtual
+source ./TFG/bin/activate
 
-# Creamos un directorio de construcción
-mkdir build
+# Instalamos las dependencias
+pip install -q -U google-genai
 
-# Cambiamos al directorio de construcción
-cd build
 
-# Configuramos el proyecto con CMake
-cmake ../
-
-# Compilamos el proyecto
-make 
-
-# Realizamos pruebas para verificar la instalación
-make test
-
-# Instalamos el proyecto
-sudo make install
-
-# Ejecutamos el script de instalación
-sudo srsran_install_configs.sh user
 
