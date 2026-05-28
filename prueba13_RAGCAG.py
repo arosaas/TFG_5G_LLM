@@ -11,10 +11,9 @@ from fpdf import FPDF
 import PyPDF2
 import pickle
 
-# IR INTERCAMABIANDO API_KEY CADA VEZ QUE SE USE UNO O EL OTRO export GEMINI_API_KEY=AIzaSyBVNuTRpxSQiFIYSTe-2QWrMIoYC2w0zMo
-# export GEMINI_API_KEY=AIzaSyBmUXGAYVIyT3rj4neAR6eUjk1RRjVLG7k
 
-client = genai.Client(api_key="AIzaSyClBYOt-EFUEuQ1K6t9WdKvUZbfgt78bjM")
+
+client = genai.Client()
 
 model_gen = "gemini-2.5-flash"
 model_emb = "gemini-embedding-001"  
