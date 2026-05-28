@@ -22,7 +22,7 @@ graph TD
     
     Error_Check -- No --> Save_Vector[Añadir vector a bd_vectorial]
     Save_Vector --> Checkpoint{¿Se han guardado <br> 10 vectores?}
-    Checkpoint -- Sí --> Dump_DB[Guardar checkpoint en .pkl]
+    Checkpoint -- Sí --> Dump_DB[Guardar progreso en .pkl]
     Checkpoint -- No --> Next_Doc{¿Quedan <br> faltantes?}
     Dump_DB --> Next_Doc
     Next_Doc -- Sí --> Embed_Loop

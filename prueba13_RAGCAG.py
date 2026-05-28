@@ -68,8 +68,8 @@ def chat_terminal():
 
         # RESTRICCIONES
         Si la petición del usuario no es clara o no tiene nada que ver con configuraciones 5G, responde con un mensaje de error indicando que solo puedes generar configuraciones relacionadas con 5G y O-RAN, y no respondas a la petición.
-        El mensaje con el que vas a responder SIEMPRE a este tipo de inputs erróneos será: "Error: Solo puedo generar configuraciones 5G, por favor, introduzca una entrada válida".
-
+        El mensaje con el que vas a responder SIEMPRE a este tipo de inputs erróneos será: "Error: Solo es posible la generación de configuraciones 5G, por favor, introduzca una entrada válida".
+        
         # INSTRUCCIONES DE GENERACIÓN
         Además del conocimiento base global (CAG), debes cruzar esta información con la teoría recuperada de los documentos 3GPP (RAG) para generar configuraciones coherentes y justificadas.
         - El gNB debe configurarse con parámetros técnicos realistas y coherentes con el estándar 3GPP, utilizando la información recuperada del RAG para fundamentar cada valor.
@@ -91,6 +91,7 @@ def chat_terminal():
         # FORMATO OBLIGATORIO DE SALIDA
         Estructura tu respuesta única y exclusivamente usando los siguientes bloques delimitadores. 
         NO uses bloques de código markdown (```yaml) dentro de los delimitadores. Devuelve solo texto plano.
+    
 
         ---START_GNB---
         [Código YAML del gNB]
