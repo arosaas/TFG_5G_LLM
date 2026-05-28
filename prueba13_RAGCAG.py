@@ -12,8 +12,8 @@ import PyPDF2
 import pickle
 
 
-
 client = genai.Client()
+
 
 model_gen = "gemini-2.5-flash"
 model_emb = "gemini-embedding-001"  
