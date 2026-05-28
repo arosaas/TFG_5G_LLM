@@ -1,6 +1,6 @@
 # --- CODIGO DE PRUEBA PARA LA ARQUITECTURA HIBRIDA CAG+RAG EN EL CONTEXTO DE CONFIGURACIONES 5G --- 
 # Autor: Alejandro R. Sarabia
-# Fecha: Mayo 2026
+# Fecha: 28 Mayo 2026
 
 from google import genai            
 from google.genai import types
