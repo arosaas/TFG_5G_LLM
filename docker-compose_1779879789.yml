@@ -1,6 +1,3 @@
-# docker-compose.yml
-# Despliegue de Open5GS y srsRAN gNB en contenedores Docker.
-
 services:
   5gc:
     container_name: open5gs_5gc
@@ -11,7 +8,7 @@ services:
         OS_VERSION: "22.04"
         OPEN5GS_VERSION: "v2.7.0"
     env_file:
-      - ${OPEN_5GS_ENV_FILE:-open5gs/open5gs.env}
+      - ${OPEN_5GS_ENV_FILE:-open5gs/open5gs.env} # Asegúrate de que este archivo configure MCC=001, MNC=01, TAC=7
     privileged: true
     ports:
       - "9898:9999/tcp"
@@ -23,7 +20,7 @@ services:
       retries: 60
     networks:
       ran:
-        ipv4_address: 10.53.1.2     # IP estática para el 5GC. Coherente con gNB.
+        ipv4_address: 10.53.1.2 # IP estática para el 5GC
 
   gnb:
     container_name: srsran_gnb
@@ -46,7 +43,7 @@ services:
       - gnb_compose_config.yml
     networks:
       ran:
-        ipv4_address: 10.53.1.3     # IP estática para el gNB. Coherente con gNB config.
+        ipv4_address: 10.53.1.3 # IP estática para el gNB
       metrics:
         ipv4_address: 172.19.1.3
     depends_on:
@@ -54,24 +51,51 @@ services:
         condition: service_healthy
     command: gnb -c /gnb_config.yml -c /gnb_compose_config.yml
 
+  ue:
+    container_name: srsran_ue
+    image: srsran/ue # Asume que tienes una imagen srsran/ue disponible o la construirás
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ue # Si necesitas construir el UE desde el código fuente
+      args:
+        OS_VERSION: "24.04"
+    privileged: true
+    cap_add:
+      - SYS_NICE
+    volumes:
+      - /dev/bus/usb/:/dev/bus/usb/
+      - ue-storage:/tmp
+    configs:
+      - ue_config.conf
+    networks:
+      ran:
+        ipv4_address: 10.53.1.4 # IP estática para el UE
+    depends_on:
+      gnb:
+        condition: service_healthy
+    command: ue -c /ue_config.conf
+
 configs:
   gnb_config.yml:
-    file: ./configs/gnb_zmq_PRUEBA7.yml # Ruta al archivo de configuración del gNB generado.
+    file: ./gnb.yml # Ruta al archivo de configuración del gNB generado
   gnb_compose_config.yml:
     content: |
       cu_cp:
         amf:
-          addr: 10.53.1.2           # Dirección IP del AMF.
-          bind_addr: 0.0.0.0        # IP local que el gNB usa para el tráfico del AMF. ESTRICTA REGLA: DEBE SER 0.0.0.0.
+          addr: 10.53.1.2 # IP del 5GC
+          bind_addr: 10.53.1.3 # IP del gNB
       metrics:
         autostart_stdout_metrics: true
         enable_json: true
       remote_control:
-        bind_addr: 0.0.0.0          # Dirección de bind para control remoto. ESTRICTA REGLA: DEBE SER 0.0.0.0.
+        bind_addr: 0.0.0.0
         enabled: true
+  ue_config.conf:
+    file: ./ue.conf # Ruta al archivo de configuración del UE generado
 
 volumes:
   gnb-storage:
+  ue-storage:
 
 networks:
   ran:

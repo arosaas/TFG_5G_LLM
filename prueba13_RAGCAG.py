@@ -1,6 +1,6 @@
 # --- CODIGO DE PRUEBA PARA LA ARQUITECTURA HIBRIDA CAG+RAG EN EL CONTEXTO DE CONFIGURACIONES 5G --- 
 # Autor: Alejandro R. Sarabia
-# Fecha: Mayo 2026
+# Fecha: 28 Mayo 2026
 
 from google import genai            
 from google.genai import types
@@ -11,7 +11,9 @@ from fpdf import FPDF
 import PyPDF2
 import pickle
 
+
 client = genai.Client()
+
 
 model_gen = "gemini-2.5-flash"
 model_emb = "gemini-embedding-001"  
@@ -64,13 +66,16 @@ def chat_terminal():
         Utiliza estrictamente la estructura de estas plantillas YAML, YML y CONF que tienes en tu memoria base:
         {contexto_cag}
 
+        # RESTRICCIONES
+        Si la petición del usuario no es clara o no tiene nada que ver con configuraciones 5G, responde con un mensaje de error indicando que solo puedes generar configuraciones relacionadas con 5G y O-RAN, y no respondas a la petición.
+        El mensaje con el que vas a responder SIEMPRE a este tipo de inputs erróneos será: "Error: Solo es posible la generación de configuraciones 5G, por favor, introduzca una entrada válida".
+        
         # INSTRUCCIONES DE GENERACIÓN
         Además del conocimiento base global (CAG), debes cruzar esta información con la teoría recuperada de los documentos 3GPP (RAG) para generar configuraciones coherentes y justificadas.
         - El gNB debe configurarse con parámetros técnicos realistas y coherentes con el estándar 3GPP, utilizando la información recuperada del RAG para fundamentar cada valor.
         - El UE debe tener una configuración que refleje un dispositivo móvil típico, con parámetros que se correspondan con los del gNB y que estén justificados por la teoría del RAG.   
         - El docker-compose.yml debe contener los servicios necesarios para desplegar el gNB y el UE, con puertos y redes que permitan la comunicación entre ambos, y que estén alineados con las configuraciones de red definidas en el gNB y el UE.
-        Deberás mostrar además por pantalla un tutorial siguiendo la información que aparece en https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html
-        en el apartado ZeroMQ-based Setup para explicar cómo se realizan las pruebas de conectividad.
+       
         
         # REGLAS ESTRICTAS DE COHERENCIA E2E
         - El MCC y MNC deben ser idénticos en el gNB, en el UE (IMSI) y en el Core.
@@ -86,6 +91,7 @@ def chat_terminal():
         # FORMATO OBLIGATORIO DE SALIDA
         Estructura tu respuesta única y exclusivamente usando los siguientes bloques delimitadores. 
         NO uses bloques de código markdown (```yaml) dentro de los delimitadores. Devuelve solo texto plano.
+    
 
         ---START_GNB---
         [Código YAML del gNB]
