@@ -1,0 +1,39 @@
+@startuml GNB_LOGS
+
+skinparam style strictuml
+skinparam sequenceMessageAlign center
+
+participant "gNB" as gNB #LightBlue
+participant "AMF" as AMF #LightGreen
+
+autonumber
+
+== Setup de la Conexión NGAP ==
+gNB -> AMF : NGSetupRequest\n[0.000000]
+AMF -> gNB : NGSetupResponse\n[0.004472]
+
+== Procedimiento NAS (Registro y Autenticación) ==
+gNB -> AMF : InitialUEMessage, Registration request\n[4.703503]
+AMF -> gNB : DownlinkNASTransport, Authentication request\n[4.706309]
+gNB -> AMF : UplinkNASTransport, Authentication response\n[4.744634]
+AMF -> gNB : DownlinkNASTransport, Security mode command\n[4.760384]
+gNB -> AMF : UplinkNASTransport\n[4.789145]
+
+== Configuración del Contexto ==
+AMF -> gNB : InitialContextSetupRequest\n[4.797486]
+gNB -> AMF : InitialContextSetupResponse\n[4.873991]
+gNB -> AMF : UERadioCapabilityInfoIndication\n[4.874032]
+
+== Transporte NAS y Sesión PDU ==
+gNB -> AMF : UplinkNASTransport\n[4.914814]
+gNB -> AMF : UplinkNASTransport\n[4.914833]
+AMF -> gNB : DownlinkNASTransport\n[4.999504]
+AMF -> gNB : PDUSessionResourceSetupRequest\n[5.005401]
+gNB -> AMF : PDUSessionResourceSetupResponse\n[5.041610]
+gNB -> AMF : UplinkNASTransport\n[5.041676]
+
+== Reseteo de la Conexión ==
+gNB -> AMF : NGReset\n[97.042705]
+AMF -> gNB : NGResetAcknowledge\n[97.043911]
+
+@enduml
