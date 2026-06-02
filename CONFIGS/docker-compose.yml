@@ -27,8 +27,25 @@ services:
       args:
         OS_VERSION: "22.04"
         OPEN5GS_VERSION: "v2.7.0"
-    env_file:
-      - ${OPEN_5GS_ENV_FILE:-open5gs/open5gs.env}
+    services:
+  5gc:
+    container_name: open5gs_5gc
+    build:
+      context: open5gs
+      target: open5gs
+      args:
+        OS_VERSION: "22.04"
+        OPEN5GS_VERSION: "v2.7.0"
+    environment:
+      - MONGODB_IP=127.0.0.1
+      - OPEN5GS_IP=10.53.1.2
+      - UE_IP_BASE=10.45.0
+      - UPF_ADVERTISE_IP=10.53.1.2
+      - DEBUG=false
+      - SUBSCRIBER_DB=001010000000001,00aabbccddeeff112233445566778899,opc,112233445566778899aabbccddeeff00,8000,9,10.45.1.2
+      - NETWORK_NAME_FULL=srsRAN
+      - NETWORK_NAME_SHORT=srsRAN
+      - TZ=Europe/Madrid
     privileged: true
     ports:
       - "9898:9999/tcp"
