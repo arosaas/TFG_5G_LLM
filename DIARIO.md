@@ -379,7 +379,7 @@ Aborted
         - OBLIGATORIO: En el archivo docker-compose.yml, debes asignar estáticamente las direcciones IP (usando 'ipv4_address') a cada contenedor para que coincidan con las configuradas en los archivos del gNB y el UE.
         - OBLIGATORIO: El valor de "common_scs" y el de "ssb_scs" (o cualquier referencia al Sub-Carrier Spacing del SSB) DEBEN SER EXACTAMENTE IGUALES en el archivo del gNB. srsRAN no soporta que sean diferentes.
         - MUY IMPORTANTE (ERROR DE BIND UDP): En TODOS los archivos generados (tanto en el YAML del gNB principal como en el docker-compose.yml), CUALQUIER parámetro 'bind_addr' DEBE tener el valor exacto '0.0.0.0'. Bajo ningún concepto uses la IP 10.53.1.3 para los binds.
-- OBLIGATORIO: No alteres ni inventes parámetros de hardware de radio o tasas de muestreo. Debes copiar el bloque 'ru_sdr' (incluyendo los valores de 'srate' y 'device_args') EXACTAMENTE igual que como aparece en las plantillas base (CAG). Utiliza la teoría del RAG únicamente para la configuración lógica y de red (SST, PLMN, ARFCN), no para modificar la configuración física del SDR.
+        - OBLIGATORIO: No alteres ni inventes parámetros de hardware de radio o tasas de muestreo. Debes copiar el bloque 'ru_sdr' (incluyendo los valores de 'srate' y 'device_args') EXACTAMENTE igual que como aparece en las plantillas base (CAG). Utiliza la teoría del RAG únicamente para la configuración lógica y de red (SST, PLMN, ARFCN), no para modificar la configuración física del SDR.
 
         # FORMATO OBLIGATORIO DE SALIDA
         Estructura tu respuesta única y exclusivamente usando los siguientes bloques delimitadores. 

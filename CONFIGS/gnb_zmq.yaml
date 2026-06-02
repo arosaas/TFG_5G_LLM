@@ -6,7 +6,6 @@
 cu_cp:
   amf:
     addr: 10.53.1.2               # The address or hostname of the AMF.
-    addr: 127.0.0.5                 # The address or hostname of the AMF.
     port: 38412
     bind_addr: 10.53.1.1            # A local IP that the gNB binds to for traffic from the AMF.
     supported_tracking_areas:
@@ -21,8 +20,6 @@ ru_sdr:
   device_driver: zmq                # The RF driver name.
   device_args: tx_port=tcp://127.0.0.1:2000,rx_port=tcp://127.0.0.1:2001,base_srate=11.52e6 # Optionally pass arguments to the selected RF driver.
   srate: 11.52                      # RF sample rate might need to be adjusted according to selected bandwidth.
-  device_args: tx_port=tcp://127.0.0.1:2000,rx_port=tcp://127.0.0.1:2001,base_srate=23.04e6 # Optionally pass arguments to the selected RF driver.
-  srate: 23.04                      # RF sample rate might need to be adjusted according to selected bandwidth.
   tx_gain: 75                       # Transmit gain of the RF might need to adjusted to the given situation.
   rx_gain: 75                       # Receive gain of the RF might need to adjusted to the given situation.
 
@@ -31,7 +28,6 @@ cell_cfg:
   band: 3                           # The NR band.
   channel_bandwidth_MHz: 10         # Bandwith in MHz. Number of PRBs will be automatically derived.
   channel_bandwidth_MHz: 20         # Bandwith in MHz. Number of PRBs will be automatically derived.
->>>>>>> 1e8e1f100844ea73e053cbe3de710400c478cd79
   common_scs: 15                    # Subcarrier spacing in kHz used for data.
   plmn: "00101"                     # PLMN broadcasted by the gNB.
   tac: 7                            # Tracking area code (needs to match the core configuration).
@@ -39,8 +35,6 @@ cell_cfg:
     common:
       ss0_index: 0                  # Set search space zero index to match srsUE capabilities
       coreset0_index: 6             # Set search CORESET Zero index to match srsUE capabilities
-      coreset0_index: 12            # Set search CORESET Zero index to match srsUE capabilities
->>>>>>> 1e8e1f100844ea73e053cbe3de710400c478cd79
     dedicated:
       ss2_type: common              # Search Space type, has to be set to common
       dci_format_0_1_and_1_1: false # Set correct DCI format (fallback)

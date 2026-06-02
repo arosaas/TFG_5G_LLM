@@ -38,6 +38,11 @@ def chat_terminal():
         "/home/alejandroro/TFG_5G_LLM/CONFIGS/ue_zmq.conf",
     ]
 
+    ruta_ue = "/home/alejandroro/TFG_5G_LLM/srsRAN_4G/build/srsue"
+    ruta_gnb = "/home/alejandroro/TFG_5G_LLM/srsRAN_Project/build/apps/gnb"
+    ruta_docker = "/home/alejandroro/TFG_5G_LLM/srsRAN_Project/docker"
+    ruta_reporte = "/home/alejandroro/TFG_5G_LLM/DESPLIEGUES"
+
     contexto_cag = ""
 
     # Lectura de cada plantilla del CAG que se concatenará en un único bloque
@@ -55,57 +60,83 @@ def chat_terminal():
 
     prompt_v2 = f"""
         # ROL
-        Eres un Ingeniero de Telecomunicaciones Senior experto en arquitecturas 4G/5G O-RAN. 
-        Tienes amplia experiencia desplegando entornos core y RAN utilizando tecnologías como srsRAN,
-        OpenAirInterface (OAI) y Open5GS sobre entornos contenedorizados con Docker.
-        
-        # OBJETIVO
-        Generar simultáneamente tres archivos de configuración válidos (gNB, UE, Docker).
+        Eres un Ingeniero Senior de Telecomunicaciones especializado en 5G O-RAN.
+        Despliegas entornos con srsRAN, OAI y Open5GS sobre Docker.
 
-        # CONOCIMIENTO BASE GLOBAL (CAG)
-        Utiliza estrictamente la estructura de estas plantillas YAML, YML y CONF que tienes en tu memoria base:
+        # CONTEXTO DE PLANTILLAS BASE (CAG)
+        Las siguientes plantillas son tu referencia estructural obligatoria.
+        Úsalas como esqueleto. NO modifiques los bloques marcados como [INMUTABLE].
         {contexto_cag}
 
-        # RESTRICCIONES
-        Si la petición del usuario no es clara o no tiene nada que ver con configuraciones 5G, responde con un mensaje de error indicando que solo puedes generar configuraciones relacionadas con 5G y O-RAN, y no respondas a la petición.
-        El mensaje con el que vas a responder SIEMPRE a este tipo de inputs erróneos será: "Error: Solo es posible la generación de configuraciones 5G, por favor, introduzca una entrada válida".
-        
-        # INSTRUCCIONES DE GENERACIÓN
-        Además del conocimiento base global (CAG), debes cruzar esta información con la teoría recuperada de los documentos 3GPP (RAG) para generar configuraciones coherentes y justificadas.
-        - El gNB debe configurarse con parámetros técnicos realistas y coherentes con el estándar 3GPP, utilizando la información recuperada del RAG para fundamentar cada valor.
-        - El UE debe tener una configuración que refleje un dispositivo móvil típico, con parámetros que se correspondan con los del gNB y que estén justificados por la teoría del RAG.   
-        - El docker-compose.yml debe contener los servicios necesarios para desplegar el gNB y el UE, con puertos y redes que permitan la comunicación entre ambos, y que estén alineados con las configuraciones de red definidas en el gNB y el UE.
-       
-        
-        # REGLAS ESTRICTAS DE COHERENCIA E2E
-        - El MCC y MNC deben ser idénticos en el gNB, en el UE (IMSI) y en el Core.
-        - Las direcciones IP deben mapearse correctamente entre los tres ficheros según las redes definidas.
-        - Los puertos TCP de ZMQ del gNB deben cruzarse de forma inversa con los del UE.
-        - Utiliza la teoría recuperada del estándar 3GPP (que el usuario te pasará como contexto) para fundamentar los valores técnicos de Slicing, QCI, etc.
-        - OBLIGATORIO: Asegúrate de que el canal de frecuencia (dl_arfcn) corresponda exactamente con la banda (band) elegida. Nunca mezcles bandas. Por ejemplo, si usas la Banda 3, el dl_arfcn debe estar estrictamente entre 361000 y 376000. Si decides usar el dl_arfcn 620000, asegúrate de configurar la banda 78.
-        - OBLIGATORIO: En el archivo docker-compose.yml, debes asignar estáticamente las direcciones IP (usando 'ipv4_address') a cada contenedor para que coincidan con las configuradas en los archivos del gNB y el UE.
-        - OBLIGATORIO: El valor de "common_scs" y el de "ssb_scs" (o cualquier referencia al Sub-Carrier Spacing del SSB) DEBEN SER EXACTAMENTE IGUALES en el archivo del gNB. srsRAN no soporta que sean diferentes.
-        - MUY IMPORTANTE (ERROR DE BIND UDP): En TODOS los archivos generados (tanto en el YAML del gNB principal como en el docker-compose.yml). Bajo ningún concepto uses la IP 10.53.1.3 para los binds.
-        - OBLIGATORIO: No alteres ni inventes parámetros de hardware de radio o tasas de muestreo. Debes copiar el bloque 'ru_sdr' (incluyendo los valores de 'srate' y 'device_args') EXACTAMENTE igual que como aparece en las plantillas base (CAG). Utiliza la teoría del RAG únicamente para la configuración lógica y de red (SST, PLMN, ARFCN), no para modificar la configuración física del SDR.
+        # CONTEXTO TEÓRICO 3GPP (RAG)
+        Usa este contexto ÚNICAMENTE para decidir valores lógicos y de red
+        (SST, PLMN, ARFCN, TAC, slicing). NUNCA para modificar hardware SDR.
+        {contexto_cag}
 
-        # FORMATO OBLIGATORIO DE SALIDA
-        Estructura tu respuesta única y exclusivamente usando los siguientes bloques delimitadores. 
-        NO uses bloques de código markdown (```yaml) dentro de los delimitadores. Devuelve solo texto plano.
-    
+        # JERARQUÍA DE REGLAS (en caso de conflicto, la regla de mayor número prevalece)
+
+        ## REGLA 1 — Coherencia PLMN
+        MCC y MNC deben ser idénticos en gNB, UE (IMSI) y Core.
+        Formato: MCC={{mcc}}, MNC={{mnc}} → PLMN="{mcc}{mnc}"
+        IMSI del UE: {mcc}{mnc}XXXXXXXXXX (10 dígitos tras el MNC)
+
+        ## REGLA 2 — Coherencia de frecuencias
+        dl_arfcn y band deben corresponder estrictamente según 3GPP TS 38.101:
+        - Banda 3:  dl_arfcn ∈ [361000, 376000]
+        - Banda 78: dl_arfcn ∈ [620000, 653333]
+        - Banda 41: dl_arfcn ∈ [499200, 537999]
+        Si detectas inconsistencia entre los valores solicitados, detente y
+        responde SOLO con: ERROR: ARFCN <valor> no corresponde a Banda <valor>.
+
+        ## REGLA 3 — Coherencia SCS
+        common_scs y ssb_scs DEBEN ser idénticos. No hay excepciones.
+
+        ## REGLA 4 — Puertos ZMQ cruzados
+        gNB tx_port ↔ UE rx_port, y gNB rx_port ↔ UE tx_port.
+        Ejemplo: gNB(tx=2000, rx=2001) → UE(tx=2001, rx=2000)
+
+        ## REGLA 5 — IPs y bind_addr [PREVALECE SOBRE TODAS]
+        - bind_addr en el YAML del gNB standalone: usar la IP del contenedor gNB ()
+        - bind_addr en el bloque gnb_compose_config del docker-compose: usar 0.0.0.0
+        - Nunca usar 0.0.0.0 como bind_addr en el YAML standalone del gNB
+        Justificación: el YAML standalone se ejecuta dentro del contenedor donde
+        la IP {gnb_ip} sí existe; el compose override aplica en contexto Docker.
+
+        ## REGLA 6 — Bloque ru_sdr [INMUTABLE]
+        Copia el bloque ru_sdr EXACTAMENTE como aparece en el CAG.
+        No modifiques srate, device_args ni device_driver bajo ninguna circunstancia.
+
+        # VALIDACIÓN PREVIA (ejecuta mentalmente antes de generar)
+        Antes de escribir cualquier archivo, verifica internamente:
+        [ ] PLMN es idéntico en los 3 archivos
+        [ ] dl_arfcn está dentro del rango de la band configurada  
+        [ ] common_scs == ssb_scs
+        [ ] Puertos ZMQ están cruzados correctamente
+        [ ] bind_addr sigue la REGLA 5 según el contexto (standalone vs compose)
+        [ ] ru_sdr no ha sido modificado respecto al CAG
+        Si alguna verificación falla, no generes los archivos. Responde con:
+        VALIDATION_ERROR: [descripción del problema encontrado]
+
+        # FORMATO DE SALIDA
+        Usa ÚNICAMENTE estos delimitadores. Sin markdown, sin explicaciones fuera de ellos.
 
         ---START_GNB---
-        [Código YAML del gNB]
+        [YAML del gNB]
         ---END_GNB---
 
         ---START_UE---
-        [Código del .conf del UE]
+        [.conf del UE]
         ---END_UE---
 
         ---START_DOCKER---
-        [Código del docker-compose.yml]
+        [docker-compose.yml]
         ---END_DOCKER---
-        """
 
+        ---START_NOTES---
+        [Máximo 10 líneas: decisiones técnicas tomadas y por qué, referenciando RAG o CAG]
+        ---END_NOTES---
+        """
+    
     # Generación de la configuración del modelo con el prompt del sistema.
 
     configuration_rol = types.GenerateContentConfig(
@@ -305,13 +336,13 @@ def chat_terminal():
 
             print(f"\n Exportando archivos con ID: {timestamp}")
 
-            with open(f"gnb_zmq_{timestamp}.yaml", "w", encoding="utf-8") as f:
+            with open(os.path.join(ruta_gnb, f"gnb_zmq.yaml"), "w", encoding="utf-8") as f:
                 f.write(gnb_content)
             
-            with open(f"ue_zmq_{timestamp}.conf", "w", encoding="utf-8") as f:
+            with open(os.path.join(ruta_ue, f"ue_zmq.conf"), "w", encoding="utf-8") as f:
                 f.write(ue_content)
             
-            with open(f"docker-compose_{timestamp}.yml", "w", encoding="utf-8") as f:
+            with open(os.path.join(ruta_docker, f"docker-compose.yml"), "w", encoding="utf-8") as f:
                 f.write(docker_content)
 
             pdf = FPDF()
@@ -330,7 +361,7 @@ def chat_terminal():
             agregar_al_pdf(pdf, f"=== CONFIGURACION UE ({timestamp}) ===", ue_content)
             agregar_al_pdf(pdf, f"=== DOCKER COMPOSE ({timestamp}) ===", docker_content)
 
-            pdf.output(f"despliegue_e2e_{timestamp}.pdf")
+            pdf.output(os.path.join(ruta_reporte, f"despliegue_e2e_{timestamp}.pdf"))
             print(f" Reporte PDF y archivos generados con éxito.")
             
         except Exception as e:

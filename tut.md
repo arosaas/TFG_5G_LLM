@@ -8,4 +8,3 @@ source ./TFG/bin/activate
 pip install -q -U google-genai
 
 
-
