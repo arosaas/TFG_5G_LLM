@@ -1,0 +1,348 @@
+ Image docker-5gc Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 673B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.20kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/ubuntu:22.04
+#3 DONE 0.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 142B done
+#5 DONE 0.0s
+
+#6 [base 1/8] FROM docker.io/library/ubuntu:22.04@sha256:4f838adc7181d9039ac795a7d0aba05a9bd9ecd480d294483169c5def983b64d
+#6 resolve docker.io/library/ubuntu:22.04@sha256:4f838adc7181d9039ac795a7d0aba05a9bd9ecd480d294483169c5def983b64d 0.0s done
+#6 DONE 0.0s
+
+#7 [open5gs 2/3] COPY open5gs-5gc.yml open5gs-5gc.yml.in
+#7 CACHED
+
+#8 [base 4/8] RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends wget gnupg     && wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add     && . /etc/os-release     && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $UBUNTU_CODENAME/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list     && DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends mongodb-org     && apt-get autoremove && apt-get clean
+#8 CACHED
+
+#9 [base 8/8] RUN python3 -m pip install pymongo click pyroute2 ipaddress python-iptables
+#9 CACHED
+
+#10 [base 2/8] RUN DEBIAN_FRONTEND=noninteractive apt-get update     && apt install -y software-properties-common     && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [base 5/8] RUN echo v2.7.0 > ./open5gsversion
+#11 CACHED
+
+#12 [base 7/8] RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -     && apt-get install -y nodejs     && cd open5gs/webui     && npm ci --no-optional
+#12 CACHED
+
+#13 [open5gs 1/3] WORKDIR /open5gs
+#13 CACHED
+
+#14 [base 6/8] RUN if [ -z "" ]; then NUM_JOBS=$(nproc); fi &&     git clone --depth 1 --branch $(cat ./open5gsversion) https://github.com/open5gs/open5gs open5gs    && cd open5gs     && meson build --prefix=`pwd`/install     && ninja -j  -C build     && cd build     && ninja install
+#14 CACHED
+
+#15 [base 3/8] RUN DEBIAN_FRONTEND=noninteractive apt-get update     && apt-get install -y     python3-pip     python3-setuptools     python3-wheel     ninja-build     build-essential     flex     bison     git     libsctp-dev     libgnutls28-dev     libgcrypt-dev     libssl-dev     libidn11-dev     libmongoc-dev     libbson-dev     libyaml-dev     libnghttp2-dev     libmicrohttpd-dev     libcurl4-gnutls-dev     libnghttp2-dev     libtins-dev     meson     curl     gettext     gdb     iproute2     iptables     iputils-ping     netcat-openbsd     iperf     iperf3     libtalloc-dev     cmake     && rm -rf /var/lib/apt/lists/*
+#15 CACHED
+
+#16 [open5gs 3/3] COPY open5gs_entrypoint.sh add_users.py setup_tun.py subscriber_db.cs[v] ./
+#16 CACHED
+
+#17 exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:050550284636998ad1332c2d51d90aa8a89fb51efa1a7a3a81725bab196fbb6f done
+#17 exporting config sha256:500bef56aa554b6c12daa2aa5e6d691d5ce7c683c88708a787d8640baabfc7c4 done
+#17 exporting attestation manifest sha256:14b37f25c637ec043e614ff37b9692fc9cf955c831bda98ab9c736cb123196c0
+#17 exporting attestation manifest sha256:14b37f25c637ec043e614ff37b9692fc9cf955c831bda98ab9c736cb123196c0 0.1s done
+#17 exporting manifest list sha256:f11db4f13ff1bab635e14f53919c60296aa6449194763dd599b9e50f9a9e2563 done
+#17 naming to docker.io/library/docker-5gc:latest done
+#17 unpacking to docker.io/library/docker-5gc:latest done
+#17 DONE 0.1s
+
+#18 resolving provenance for metadata file
+#18 DONE 0.0s
+ Image docker-5gc Built 
+ Network docker_ran Creating 
+ Network docker_ran Created 
+ Container open5gs_5gc Creating 
+ Container open5gs_5gc Created 
+Attaching to open5gs_5gc
+ Container open5gs_5gc Starting 
+ Container open5gs_5gc Started 
+open5gs_5gc  | nc: connect to 127.0.0.1 port 27017 (tcp) failed: Connection refused
+open5gs_5gc  | waiting for mongodb
+open5gs_5gc  | 
+open5gs_5gc  | > open5gs@2.7.0 dev
+open5gs_5gc  | > node server/index.js
+open5gs_5gc  | 
+open5gs_5gc  | > Using external babel configuration
+open5gs_5gc  | > Location: "/open5gs/webui/.babelrc"
+open5gs_5gc  | Connection to 127.0.0.1 27017 port [tcp/*] succeeded!
+open5gs_5gc  |  DONE  Compiled successfully in 840ms9:13:58 PM
+open5gs_5gc  | 
+open5gs_5gc  | Mongoose: subscribers.ensureIndex({ imsi: 1 }, { unique: true, background: true })
+open5gs_5gc  | Mongoose: accounts.ensureIndex({ username: 1 }, { unique: true, background: true })
+open5gs_5gc  | (node:95) DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead.
+open5gs_5gc  | (Use `node --trace-deprecation ...` to show where the warning was created)
+open5gs_5gc  | Mongoose: accounts.count({}, {})
+open5gs_5gc  | (node:95) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+open5gs_5gc  | > Ready on http://1ce9920cc1c9:9999
+open5gs_5gc  | Mongoose: accounts.findOne({ '$or': [ { username: 'admin' } ] }, { projection: { hash: 0, salt: 0 } })
+open5gs_5gc  | Mongoose: accounts.insertOne({ roles: [ 'admin' ], _id: ObjectId("6a1dd9f68e3f40005f469374"), username: 'admin', salt: 'bc28f14792bd6415c3bb714cd072332ac7341514fcf51d505217ef65b36c3e5a', hash: 'f4fb8c13671ded80a988be721acd9e1018212fea2a18220926729432c2957e3d5ccee0ce0a2e8778dfb410c573926b48db65d56644cd0435e44473d486b6f9eca000d558deb65f6d6dc91e72f71ca2f0941b111fff06c7dd0dab222c68533e9479b6e305877ffd9da973eeb51c751719d6d93f35bd792a1ae2beee6681c6a7c05ed72be906e65047c84f86e0380566519e7e0b770619f98499ae5258e0f7b271a504a8a9585bf6890759cfdef4193d7edd3e73b2000857299de6ee4b4c484333d9a06961635823be969c509f708290ecc7b01a19e033172ead73ed71666dcdac0edfe2796b1959be37c88feb1541856809aed60bf8540b5956eac89bb29eee7f0be89e5765f19047f1402dc09dfdc9d730add20b31b4741ffd7c8e9c32627fe0a924e9726e8bd142f83a5ac8e04fa568c4e610d5f2c89e09064e4090f62662c29e6aaedc702fce6e98c2754cfd6c746a5f0289e5213ea85e42f69854b0ed6519db2c30042cf5702b3314bf8fe784be721123c19b30758a4fa4fa532264eaf8172b063a4c01b7a1bffe5ed698fcd809110876831a2949a805bd235795c69bdd15f4be6e95baea28bddbdbbd4d6215a9f453da92fda96b5ebf4e04be5effba5be7bbb6c3ae0773bb1388eb63fd5ee1d7be2c61f47993739711a469caf49ddfbc119c6781df9555254dbb3b98ce169cd22cbd052eb4066f8ea31c9055f5e4977cba', __v: 0}, { session: null })
+open5gs_5gc  | SUBSCRIBER_DB=001010000000001,00aabbccddeeff112233445566778899,opc,112233445566778899aabbccddeeff00,8000,9,10.45.1.2
+open5gs_5gc  | Reading subscriber data from cmd.
+open5gs_5gc  | Added subscriber with Inserted ID : 6a1dd9f6d25535ed9a9c8a49
+open5gs_5gc  | 6a1dd9f6d25535ed9a9c8a49
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.226: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.231: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.232: [sbi] INFO: nghttp2_server() [http://127.0.0.10]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.232: [app] INFO: NRF initialize...done (../src/nrf/app.c:31)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.282: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.283: [sbi] INFO: nghttp2_server() [http://127.0.0.22]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.283: [app] INFO: SCP initialize...done (../src/scp/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.284: [nrf] INFO: [0af836f0-5dee-41f1-afa4-65e996cc802a] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.284: [sbi] INFO: [0af836f0-5dee-41f1-afa4-65e996cc802a] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.284: [nrf] INFO: [0af86832-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.284750+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.284: [nrf] INFO: [0af86be8-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.284840+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.284: [nrf] INFO: [0af86d5a-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.284876+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [nrf] INFO: [0af87368-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285031+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [nrf] INFO: [0af87458-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285054+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af86832-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.284750+02:00 [duration:86400,validity:86399.999698,patch:43199.999849] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [nrf] INFO: [0af87656-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285105+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [nrf] INFO: [0af87796-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285142+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [nrf] INFO: [0af87c00-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285253+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [nrf] INFO: [0af87da4-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285292+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af86be8-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.284840+02:00 [duration:86400,validity:86399.999417,patch:43199.999708] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af86d5a-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.284876+02:00 [duration:86400,validity:86399.999440,patch:43199.999720] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af87368-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285031+02:00 [duration:86400,validity:86399.999520,patch:43199.999760] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af87458-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285054+02:00 [duration:86400,validity:86399.999529,patch:43199.999764] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af87656-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285105+02:00 [duration:86400,validity:86399.999503,patch:43199.999751] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af87796-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285142+02:00 [duration:86400,validity:86399.999513,patch:43199.999756] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af87c00-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285253+02:00 [duration:86400,validity:86399.999583,patch:43199.999791] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.285: [sbi] INFO: [0af87da4-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.285292+02:00 [duration:86400,validity:86399.999570,patch:43199.999785] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.335: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.360: [pfcp] WARNING: unknown key `gateway` (../lib/pfcp/context.c:819)
+open5gs_5gc  | 06/01 21:13:59.360: [pfcp] INFO: pfcp_server() [127.0.0.7]:8805 (../lib/pfcp/path.c:30)
+open5gs_5gc  | 06/01 21:13:59.360: [gtp] INFO: gtp_server() [10.53.1.2]:2152 (../lib/gtp/path.c:30)
+open5gs_5gc  | 06/01 21:13:59.360: [app] INFO: UPF initialize...done (../src/upf/app.c:31)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.388: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.414: [pfcp] WARNING: unknown key `gateway` (../lib/pfcp/context.c:819)
+open5gs_5gc  | 06/01 21:13:59.414: [metrics] INFO: metrics_server() [http://127.0.0.4]:9090 (../lib/metrics/prometheus/context.c:299)
+open5gs_5gc  | 06/01 21:13:59.429: [gtp] INFO: gtp_server() [127.0.0.4]:2123 (../lib/gtp/path.c:30)
+open5gs_5gc  | 06/01 21:13:59.430: [gtp] INFO: gtp_server() [127.0.0.4]:2152 (../lib/gtp/path.c:30)
+open5gs_5gc  | 06/01 21:13:59.430: [pfcp] INFO: pfcp_server() [127.0.0.4]:8805 (../lib/pfcp/path.c:30)
+open5gs_5gc  | 06/01 21:13:59.430: [pfcp] INFO: ogs_pfcp_connect() [127.0.0.7]:8805 (../lib/pfcp/path.c:61)
+open5gs_5gc  | 06/01 21:13:59.430: [sbi] INFO: NF Service [nsmf-pdusession] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.430: [pfcp] INFO: ogs_pfcp_connect() [127.0.0.4]:8805 (../lib/pfcp/path.c:61)
+open5gs_5gc  | 06/01 21:13:59.430: [sbi] INFO: nghttp2_server() [http://127.0.0.4]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.430: [app] INFO: SMF initialize...done (../src/smf/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.430: [upf] INFO: PFCP associated [127.0.0.4]:8805 (../src/upf/pfcp-sm.c:184)
+open5gs_5gc  | 06/01 21:13:59.430: [smf] INFO: PFCP associated [127.0.0.7]:8805 (../src/smf/pfcp-sm.c:196)
+open5gs_5gc  | 06/01 21:13:59.430: [nrf] INFO: [0b0bc5da-5dee-41f1-80db-4f676a64a749] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.431: [sbi] INFO: (NRF-notify) NF registered [0b0bc5da-5dee-41f1-80db-4f676a64a749:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.431: [sbi] INFO: [SMF] (NRF-notify) NF Profile updated [0b0bc5da-5dee-41f1-80db-4f676a64a749:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.431: [sbi] INFO: [0b0bc5da-5dee-41f1-80db-4f676a64a749] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.431: [nrf] INFO: [0b0ecf14-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431560+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.431: [nrf] INFO: [0b0ed3b0-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431676+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.431: [nrf] INFO: [0b0ed608-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431736+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.431: [nrf] INFO: [0b0ed9b4-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431829+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.431: [nrf] INFO: [0b0edaa4-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431852+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.431: [sbi] INFO: [0b0ecf14-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431560+02:00 [duration:86400,validity:86399.999631,patch:43199.999815] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.431: [sbi] INFO: [0b0ed3b0-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431676+02:00 [duration:86400,validity:86399.999710,patch:43199.999855] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.432: [sbi] INFO: [0b0ed608-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431736+02:00 [duration:86400,validity:86399.999693,patch:43199.999846] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.432: [sbi] INFO: [0b0ed9b4-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431829+02:00 [duration:86400,validity:86399.999708,patch:43199.999854] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.432: [sbi] INFO: [0b0edaa4-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.431852+02:00 [duration:86400,validity:86399.999612,patch:43199.999806] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.435: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.437: [sbi] INFO: NF Service [namf-comm] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.438: [sbi] INFO: nghttp2_server() [http://127.0.0.5]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.438: [amf] INFO: ngap_server() [10.53.1.2]:38412 (../src/amf/ngap-sctp.c:61)
+open5gs_5gc  | 06/01 21:13:59.438: [sctp] INFO: AMF initialize...done (../src/amf/app.c:33)
+open5gs_5gc  | 06/01 21:13:59.438: [nrf] INFO: [0b0fa394-5dee-41f1-92de-f5cc15a76d75] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.438: [sbi] INFO: (NRF-notify) NF registered [0b0fa394-5dee-41f1-92de-f5cc15a76d75:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.438: [sbi] INFO: [AMF] (NRF-notify) NF Profile updated [0b0fa394-5dee-41f1-92de-f5cc15a76d75:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.439: [sbi] INFO: [0b0fa394-5dee-41f1-92de-f5cc15a76d75] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.439: [sbi] INFO: (NRF-notify) NF registered [0b0fa394-5dee-41f1-92de-f5cc15a76d75:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.439: [sbi] INFO: [AMF] (NRF-notify) NF Profile updated [0b0fa394-5dee-41f1-92de-f5cc15a76d75:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b10032a-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439449+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b1007a8-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439562+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b100c9e-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439687+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b100f14-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439749+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b100ffa-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439771+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b1014be-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439896+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [sbi] INFO: [0b10032a-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439449+02:00 [duration:86400,validity:86399.999539,patch:43199.999769] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.439: [nrf] INFO: [0b10163a-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439933+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.439: [sbi] INFO: [0b1007a8-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439562+02:00 [duration:86400,validity:86399.999588,patch:43199.999794] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.440: [sbi] INFO: [0b100c9e-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439687+02:00 [duration:86400,validity:86399.999509,patch:43199.999754] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.440: [sbi] INFO: [0b100f14-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439749+02:00 [duration:86400,validity:86399.999486,patch:43199.999743] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.440: [sbi] INFO: [0b100ffa-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439771+02:00 [duration:86400,validity:86399.999384,patch:43199.999692] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.440: [sbi] INFO: [0b1014be-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439896+02:00 [duration:86400,validity:86399.999497,patch:43199.999748] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.440: [sbi] INFO: [0b10163a-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.439933+02:00 [duration:86400,validity:86399.999442,patch:43199.999721] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.483: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.484: [sbi] INFO: NF Service [nausf-auth] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.484: [sbi] INFO: nghttp2_server() [http://127.0.0.11]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.484: [app] INFO: AUSF initialize...done (../src/ausf/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.485: [nrf] INFO: [0b16e6e0-5dee-41f1-b5b5-b5c4f2595013] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.485: [sbi] INFO: (NRF-notify) NF registered [0b16e6e0-5dee-41f1-b5b5-b5c4f2595013:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.485: [sbi] INFO: [AUSF] (NRF-notify) NF Profile updated [0b16e6e0-5dee-41f1-b5b5-b5c4f2595013:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.486: [sbi] INFO: [0b16e6e0-5dee-41f1-b5b5-b5c4f2595013] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.486: [sbi] INFO: (NRF-notify) NF registered [0b16e6e0-5dee-41f1-b5b5-b5c4f2595013:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.486: [sbi] INFO: [AUSF] (NRF-notify) NF Profile updated [0b16e6e0-5dee-41f1-b5b5-b5c4f2595013:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.486: [nrf] INFO: [0b172fce-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.486466+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.486: [nrf] INFO: [0b17347e-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.486583+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.486: [sbi] INFO: [0b172fce-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.486466+02:00 [duration:86400,validity:86399.999666,patch:43199.999833] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.486: [sbi] INFO: [0b17347e-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.486583+02:00 [duration:86400,validity:86399.999671,patch:43199.999835] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.533: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.535: [sbi] INFO: NF Service [nudm-ueau] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.535: [sbi] INFO: NF Service [nudm-uecm] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.535: [sbi] INFO: NF Service [nudm-sdm] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.535: [sbi] INFO: nghttp2_server() [http://127.0.0.12]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.535: [app] INFO: UDM initialize...done (../src/udm/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.536: [nrf] INFO: [0b1e9c78-5dee-41f1-a16d-578db4ae56c7] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: (NRF-notify) NF registered [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: [UDM] (NRF-notify) NF Profile updated [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: (NRF-notify) NF registered [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: [UDM] (NRF-notify) NF Profile updated [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: (NRF-notify) NF registered [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: [UDM] (NRF-notify) NF Profile updated [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] WARNING: [UDM] (NRF-notify) NF has already been added [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:927)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: [UDM] (NRF-notify) NF Profile updated [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] WARNING: NF EndPoint(addr) updated [127.0.0.12:80] (../lib/sbi/context.c:2174)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] WARNING: [UDM] (NRF-notify) NF has already been added [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:927)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] WARNING: NF EndPoint(addr) updated [127.0.0.12:7777] (../lib/sbi/context.c:1917)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] INFO: [UDM] (NRF-notify) NF Profile updated [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] WARNING: NF EndPoint(addr) updated [127.0.0.12:80] (../lib/sbi/context.c:2174)
+open5gs_5gc  | 06/01 21:13:59.536: [sbi] WARNING: NF EndPoint(addr) updated [127.0.0.12:7777] (../lib/sbi/context.c:1917)
+open5gs_5gc  | 06/01 21:13:59.537: [sbi] INFO: (NRF-notify) NF registered [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.537: [sbi] INFO: [UDM] (NRF-notify) NF Profile updated [0b1e9c78-5dee-41f1-a16d-578db4ae56c7:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.537: [sbi] INFO: [0b1e9c78-5dee-41f1-a16d-578db4ae56c7] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.537: [nrf] INFO: [0b1ef7c2-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.537459+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.537: [nrf] INFO: [0b1efbbe-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.537559+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.537: [sbi] INFO: [0b1ef7c2-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.537459+02:00 [duration:86400,validity:86399.999668,patch:43199.999834] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.537: [sbi] INFO: [0b1efbbe-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.537559+02:00 [duration:86400,validity:86399.999751,patch:43199.999875] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.587: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.588: [metrics] INFO: metrics_server() [http://127.0.0.13]:9090 (../lib/metrics/prometheus/context.c:299)
+open5gs_5gc  | 06/01 21:13:59.589: [dbi] INFO: MongoDB URI: 'mongodb://127.0.0.1/open5gs' (../lib/dbi/ogs-mongoc.c:130)
+open5gs_5gc  | 06/01 21:13:59.589: [sbi] INFO: NF Service [npcf-am-policy-control] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.589: [sbi] INFO: NF Service [npcf-smpolicycontrol] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.589: [sbi] INFO: NF Service [npcf-policyauthorization] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.589: [sbi] INFO: nghttp2_server() [http://127.0.0.13]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.589: [app] INFO: PCF initialize...done (../src/pcf/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.590: [nrf] INFO: [0b26c6e6-5dee-41f1-8fef-c5a782d1e373] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.590: [sbi] INFO: (NRF-notify) NF registered [0b26c6e6-5dee-41f1-8fef-c5a782d1e373:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.590: [sbi] INFO: [PCF] (NRF-notify) NF Profile updated [0b26c6e6-5dee-41f1-8fef-c5a782d1e373:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: [0b26c6e6-5dee-41f1-8fef-c5a782d1e373] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: (NRF-notify) NF registered [0b26c6e6-5dee-41f1-8fef-c5a782d1e373:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: [PCF] (NRF-notify) NF Profile updated [0b26c6e6-5dee-41f1-8fef-c5a782d1e373:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: (NRF-notify) NF registered [0b26c6e6-5dee-41f1-8fef-c5a782d1e373:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: [PCF] (NRF-notify) NF Profile updated [0b26c6e6-5dee-41f1-8fef-c5a782d1e373:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.591: [nrf] INFO: [0b27320c-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.591382+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.591: [nrf] INFO: [0b2737de-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.591528+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: [0b27320c-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.591382+02:00 [duration:86400,validity:86399.999828,patch:43199.999914] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.591: [nrf] INFO: [0b273a90-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.591595+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: [0b2737de-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.591528+02:00 [duration:86400,validity:86399.999773,patch:43199.999886] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:13:59.591: [sbi] INFO: [0b273a90-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.591595+02:00 [duration:86400,validity:86399.999764,patch:43199.999882] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.634: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.635: [sbi] INFO: NF Service [nnssf-nsselection] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.635: [sbi] INFO: nghttp2_server() [http://127.0.0.14]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.635: [app] INFO: NSSF initialize...done (../src/nssf/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.636: [nrf] INFO: [0b2df2d6-5dee-41f1-8c4f-fbdcbabf5464] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.636: [sbi] INFO: (NRF-notify) NF registered [0b2df2d6-5dee-41f1-8c4f-fbdcbabf5464:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.636: [sbi] INFO: [NSSF] (NRF-notify) NF Profile updated [0b2df2d6-5dee-41f1-8c4f-fbdcbabf5464:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.636: [sbi] INFO: (NRF-notify) NF registered [0b2df2d6-5dee-41f1-8c4f-fbdcbabf5464:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.636: [sbi] INFO: [0b2df2d6-5dee-41f1-8c4f-fbdcbabf5464] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.636: [sbi] INFO: [NSSF] (NRF-notify) NF Profile updated [0b2df2d6-5dee-41f1-8c4f-fbdcbabf5464:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.637: [nrf] INFO: [0b2e2e22-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.637156+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.637: [sbi] INFO: [0b2e2e22-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.637156+02:00 [duration:86400,validity:86399.999863,patch:43199.999931] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.684: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.685: [sbi] INFO: NF Service [nbsf-management] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.686: [sbi] INFO: nghttp2_server() [http://127.0.0.15]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.686: [app] INFO: BSF initialize...done (../src/bsf/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.686: [nrf] INFO: [0b359888-5dee-41f1-9b2f-d13ba089c1fc] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.686: [sbi] INFO: (NRF-notify) NF registered [0b359888-5dee-41f1-9b2f-d13ba089c1fc:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.686: [sbi] INFO: [BSF] (NRF-notify) NF Profile updated [0b359888-5dee-41f1-9b2f-d13ba089c1fc:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.687: [sbi] INFO: [0b359888-5dee-41f1-9b2f-d13ba089c1fc] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.687: [sbi] INFO: (NRF-notify) NF registered [0b359888-5dee-41f1-9b2f-d13ba089c1fc:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.687: [sbi] INFO: [BSF] (NRF-notify) NF Profile updated [0b359888-5dee-41f1-9b2f-d13ba089c1fc:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.687: [nrf] INFO: [0b35d7c6-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.687374+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.687: [sbi] INFO: [0b35d7c6-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.687374+02:00 [duration:86400,validity:86399.999861,patch:43199.999930] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | Open5GS daemon v2.7.0
+open5gs_5gc  | 
+open5gs_5gc  | 06/01 21:13:59.738: [app] INFO: Configuration: 'open5gs-5gc.yml' (../lib/app/ogs-init.c:130)
+open5gs_5gc  | 06/01 21:13:59.740: [dbi] INFO: MongoDB URI: 'mongodb://127.0.0.1/open5gs' (../lib/dbi/ogs-mongoc.c:130)
+open5gs_5gc  | 06/01 21:13:59.740: [sbi] INFO: NF Service [nudr-dr] (../lib/sbi/context.c:1812)
+open5gs_5gc  | 06/01 21:13:59.740: [sbi] INFO: nghttp2_server() [http://127.0.0.20]:7777 (../lib/sbi/nghttp2-server.c:414)
+open5gs_5gc  | 06/01 21:13:59.740: [app] INFO: UDR initialize...done (../src/udr/app.c:31)
+open5gs_5gc  | 06/01 21:13:59.741: [nrf] INFO: [0b3dd246-5dee-41f1-8e07-af57d1475141] NF registered [Heartbeat:10s] (../src/nrf/nf-sm.c:190)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: (NRF-notify) NF registered [0b3dd246-5dee-41f1-8e07-af57d1475141:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: [UDR] (NRF-notify) NF Profile updated [0b3dd246-5dee-41f1-8e07-af57d1475141:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: (NRF-notify) NF registered [0b3dd246-5dee-41f1-8e07-af57d1475141:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: [UDR] (NRF-notify) NF Profile updated [0b3dd246-5dee-41f1-8e07-af57d1475141:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: [0b3dd246-5dee-41f1-8e07-af57d1475141] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:221)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: (NRF-notify) NF registered [0b3dd246-5dee-41f1-8e07-af57d1475141:1] (../lib/sbi/nnrf-handler.c:924)
+open5gs_5gc  | 06/01 21:13:59.741: [sbi] INFO: [UDR] (NRF-notify) NF Profile updated [0b3dd246-5dee-41f1-8e07-af57d1475141:1] (../lib/sbi/nnrf-handler.c:938)
+open5gs_5gc  | 06/01 21:13:59.742: [nrf] INFO: [0b3e3704-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.742242+02:00 [validity_duration:86400] (../src/nrf/nnrf-handler.c:445)
+open5gs_5gc  | 06/01 21:13:59.742: [sbi] INFO: [0b3e3704-5dee-41f1-b49a-9188c19da8ac] Subscription created until 2026-06-02T21:13:59.742242+02:00 [duration:86400,validity:86399.999771,patch:43199.999885] (../lib/sbi/nnrf-handler.c:708)
+open5gs_5gc  | 06/01 21:14:11.872: [amf] INFO: gNB-N2 accepted[10.53.1.1]:57587 in ng-path module (../src/amf/ngap-sctp.c:113)
+open5gs_5gc  | 06/01 21:14:11.872: [amf] INFO: gNB-N2 accepted[10.53.1.1] in master_sm module (../src/amf/amf-sm.c:741)
+open5gs_5gc  | 06/01 21:14:11.876: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1231)
+open5gs_5gc  | 06/01 21:14:11.876: [amf] INFO: gNB-N2[10.53.1.1] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:780)
+open5gs_5gc  | 06/01 21:15:06.275: [amf] INFO: InitialUEMessage (../src/amf/ngap-handler.c:401)
+open5gs_5gc  | 06/01 21:15:06.275: [amf] INFO: [Added] Number of gNB-UEs is now 1 (../src/amf/context.c:2550)
+open5gs_5gc  | 06/01 21:15:06.275: [amf] INFO:     RAN_UE_NGAP_ID[0] AMF_UE_NGAP_ID[1] TAC[7] CellID[0x66c000] (../src/amf/ngap-handler.c:562)
+open5gs_5gc  | 06/01 21:15:06.275: [amf] INFO: [suci-0-001-01-0000-0-0-0000000001] Unknown UE by SUCI (../src/amf/context.c:1835)
+open5gs_5gc  | 06/01 21:15:06.275: [amf] INFO: [Added] Number of AMF-UEs is now 1 (../src/amf/context.c:1616)
+open5gs_5gc  | 06/01 21:15:06.275: [gmm] INFO: Registration request (../src/amf/gmm-sm.c:1165)
+open5gs_5gc  | 06/01 21:15:06.275: [gmm] INFO: [suci-0-001-01-0000-0-0-0000000001]    SUCI (../src/amf/gmm-handler.c:166)
+open5gs_5gc  | 06/01 21:15:06.576: [gmm] INFO: [imsi-001010000000001] Registration complete (../src/amf/gmm-sm.c:2146)
+open5gs_5gc  | 06/01 21:15:06.576: [amf] INFO: [imsi-001010000000001] Configuration update command (../src/amf/nas-path.c:612)
+open5gs_5gc  | 06/01 21:15:06.576: [gmm] INFO:     UTC [2026-06-01T19:15:06] Timezone[0]/DST[0] (../src/amf/gmm-build.c:559)
+open5gs_5gc  | 06/01 21:15:06.576: [gmm] INFO:     LOCAL [2026-06-01T21:15:06] Timezone[7200]/DST[1] (../src/amf/gmm-build.c:564)
+open5gs_5gc  | 06/01 21:15:06.576: [amf] INFO: [Added] Number of AMF-Sessions is now 1 (../src/amf/context.c:2571)
+open5gs_5gc  | 06/01 21:15:06.576: [gmm] INFO: UE SUPI[imsi-001010000000001] DNN[srsapn] S_NSSAI[SST:1 SD:0xffffff] smContextRef [NULL] (../src/amf/gmm-handler.c:1241)
+open5gs_5gc  | 06/01 21:15:06.576: [gmm] INFO: No SMF Instance (../src/amf/gmm-handler.c:1278)
+open5gs_5gc  | 06/01 21:15:06.577: [sbi] WARNING: [SMF] (NRF-discover) NF has already been added [0b0bc5da-5dee-41f1-80db-4f676a64a749:1] (../lib/sbi/nnrf-handler.c:1057)
+open5gs_5gc  | 06/01 21:15:06.577: [sbi] WARNING: NF EndPoint(addr) updated [127.0.0.4:80] (../lib/sbi/context.c:2174)
+open5gs_5gc  | 06/01 21:15:06.577: [sbi] WARNING: NF EndPoint(addr) updated [127.0.0.4:7777] (../lib/sbi/context.c:1917)
+open5gs_5gc  | 06/01 21:15:06.577: [sbi] INFO: [SMF] (NF-discover) NF Profile updated [0b0bc5da-5dee-41f1-80db-4f676a64a749:1] (../lib/sbi/nnrf-handler.c:1095)
+open5gs_5gc  | 06/01 21:15:06.578: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1019)
+open5gs_5gc  | 06/01 21:15:06.578: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3068)
+open5gs_5gc  | 06/01 21:15:06.580: [sbi] INFO: [SMF] (SCP-discover) NF registered [0b0bc5da-5dee-41f1-80db-4f676a64a749:1] (../lib/sbi/path.c:211)
+open5gs_5gc  | 06/01 21:15:06.582: [smf] INFO: UE SUPI[imsi-001010000000001] DNN[srsapn] IPv4[10.45.1.2] IPv6[] (../src/smf/npcf-handler.c:539)
+open5gs_5gc  | 06/01 21:15:06.582: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:208)
+open5gs_5gc  | 06/01 21:15:06.583: [gtp] INFO: gtp_connect() [127.0.0.4]:2152 (../lib/gtp/path.c:60)
+open5gs_5gc  | 06/01 21:15:06.583: [upf] INFO: UE F-SEID[UP:0xa37 CP:0x977] APN[srsapn] PDN-Type[1] IPv4[10.45.1.2] IPv6[] (../src/upf/context.c:485)
+open5gs_5gc  | 06/01 21:15:06.583: [upf] INFO: UE F-SEID[UP:0xa37 CP:0x977] APN[srsapn] PDN-Type[1] IPv4[10.45.1.2] IPv6[] (../src/upf/context.c:485)
+open5gs_5gc  | 06/01 21:15:06.583: [gtp] INFO: gtp_connect() [10.53.1.2]:2152 (../lib/gtp/path.c:60)
+open5gs_5gc  | 06/01 21:15:06.617: [gtp] INFO: gtp_connect() [10.53.1.1]:2152 (../lib/gtp/path.c:60)
+open5gs_5gc  | 06/01 21:15:06.618: [amf] INFO: [imsi-001010000000001:1:11][0:0:NULL] /nsmf-pdusession/v1/sm-contexts/{smContextRef}/modify (../src/amf/nsmf-handler.c:837)
+open5gs_5gc  | 06/01 21:15:06.629: [upf] ERROR: Invalid packet [IP version:6, Packet Length:48] (../src/upf/gtp-path.c:618)
+open5gs_5gc  | 0000: 60000000 00083aff fe800000 00000000   `.....:.........
+open5gs_5gc  | 0010: d46e298a 8cd5854b ff020000 00000000   .n)....K........
+open5gs_5gc  | 0020: 00000000 00000002 85006d1d 00000000   ..........m.....
+open5gs_5gc  | 06/01 21:15:06.744: [gmm] INFO: [imsi-001010000000001] No GUTI allocated (../src/amf/gmm-sm.c:1443)
