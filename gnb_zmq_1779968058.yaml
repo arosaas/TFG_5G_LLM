@@ -1,0 +1,58 @@
+# gnb.yaml
+# srsRAN Project gNB configuration file
+#
+# This example configuration outlines how to configure the srsRAN Project gNB to create a single NR cell
+# transmitting in band n78, with 20 MHz bandwidth and 15 kHz sub-carrier-spacing.
+# ZMQ is configured as the RF frontend for virtual radio communication.
+
+cu_cp:
+  amf:
+    addr: 10.53.1.2
+    port: 38412
+    bind_addr: 10.53.1.10
+    supported_tracking_areas:
+      - tac: 7
+        plmn_list:
+          - plmn: "00101"
+            tai_slice_support_list:
+              - sst: 1
+
+ru_sdr:
+  device_driver: zmq
+  device_args: "tx_port=tcp://10.53.1.20:2000,rx_port=tcp://0.0.0.0:2001,base_srate=30.72e6"
+  srate: 30.72
+  tx_gain: 80
+  rx_gain: 40
+
+cell_cfg:
+  dl_arfcn: 630000
+  band: 78
+  channel_bandwidth_MHz: 20
+  common_scs: 15
+  ssb_scs: 15
+  plmn: "00101"
+  tac: 7
+  nof_prb: 100
+  pdcch:
+    dedicated:
+      ss2_type: common
+      dci_format_0_1_and_1_1: false
+    common:
+      ss0_index: 0
+      coreset0_index: 12
+  prach:
+    prach_config_index: 1
+  pdsch:
+    mcs_table: qam64
+  pusch:
+    mcs_table: qam64
+
+log:
+  filename: /tmp/gnb.log
+  all_level: info
+
+pcap:
+  mac_enable: enable
+  mac_filename: /tmp/gnb_mac.pcap
+  ngap_enable: enable
+  ngap_filename: /tmp/gnb_ngap.pcap

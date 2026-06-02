@@ -1,0 +1,162 @@
+# docker-compose.yml
+# Docker Compose file for Open5GS Core, srsRAN gNB, and srsRAN UE
+#
+# This configuration sets up a 5G network simulation with virtual radio (ZMQ)
+# using Open5GS for the Core Network and srsRAN for the gNB and UE.
+
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    restart: always
+    networks:
+      ran:
+        ipv4_address: 10.53.1.100 # MongoDB can be anywhere, but in the ran network
+
+  open5gs-amf:
+    image: open5gs/open5gs
+    container_name: open5gs-amf
+    command: ["open5gs-amfd"]
+    volumes:
+      - ./config/open5gs-amf.yaml:/usr/local/etc/open5gs/amf.yaml
+    networks:
+      ran:
+        ipv4_address: 10.53.1.2
+    depends_on:
+      - mongodb
+    restart: always
+
+  open5gs-upf:
+    image: open5gs/open5gs
+    container_name: open5gs-upf
+    command: ["open5gs-upfd"]
+    volumes:
+      - ./config/open5gs-upf.yaml:/usr/local/etc/open5gs/upf.yaml
+    networks:
+      ran:
+        ipv4_address: 10.53.1.3
+    depends_on:
+      - mongodb
+    restart: always
+    privileged: true # Required for UPF to create tun device
+
+  open5gs-webui:
+    image: open5gs/webui
+    container_name: open5gs-webui
+    ports:
+      - "3000:3000"
+    networks:
+      ran:
+        ipv4_address: 10.53.1.4
+    depends_on:
+      - mongodb
+    restart: always
+
+  gnb:
+    image: srsran/enb
+    container_name: srsran-gnb
+    privileged: true
+    cap_add:
+      - SYS_NICE
+      - CAP_SYS_PTRACE
+    volumes:
+      - /tmp:/tmp
+      - ./gnb.yaml:/etc/srsran/gnb.yaml
+    command: srsgnb /etc/srsran/gnb.yaml
+    networks:
+      ran:
+        ipv4_address: 10.53.1.10
+    depends_on:
+      - open5gs-amf
+    restart: always
+
+  ue:
+    image: srsran/ue
+    container_name: srsran-ue
+    privileged: true
+    cap_add:
+      - SYS_NICE
+      - CAP_SYS_PTRACE
+    volumes:
+      - /tmp:/tmp
+      - ./ue.conf:/etc/srsran/ue.conf
+    command: srsue /etc/srsran/ue.conf
+    networks:
+      ran:
+        ipv4_address: 10.53.1.20
+    depends_on:
+      - gnb
+    restart: always
+
+networks:
+  ran:
+    name: ran
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.53.1.0/24
+
+# Configuration files for Open5GS (to be placed in a 'config' directory)
+# config/open5gs-amf.yaml
+# logger:
+#   level: info
+#   report:
+#     - all
+# global:
+#   mcc: 001
+#   mnc: 01
+#   nssai:
+#     sst: 1
+#     sd: 0x010203
+#   served_guami:
+#     - plmn_id:
+#         mcc: 001
+#         mnc: 01
+#       amf_region_id: 0x01
+#       amf_set_id: 0x01
+#       amf_pointer: 0x01
+#   tmsi:
+#     amf_set_id: 0x01
+#     amf_pointer: 0x01
+#   security:
+#     integrity_order:
+#       - NIA2
+#       - NIA0
+#     ciphering_order:
+#       - NEA0
+#       - NEA2
+# amf:
+#   sbi:
+#     server:
+#       - addr: 10.53.1.2
+#         port: 80
+#   ngap:
+#     server:
+#       - addr: 10.53.1.2
+#   metrics:
+#     server:
+#       - addr: 10.53.1.2
+#         port: 9090
+
+# config/open5gs-upf.yaml
+# logger:
+#   level: info
+#   report:
+#     - all
+# upf:
+#   sbi:
+#     server:
+#       - addr: 10.53.1.3
+#         port: 80
+#   pfcp:
+#     server:
+#       - addr: 10.53.1.3
+#   gtpu:
+#     server:
+#       - addr: 10.53.1.3
+#   metrics:
+#     server:
+#       - addr: 10.53.1.3
+#         port: 9090
