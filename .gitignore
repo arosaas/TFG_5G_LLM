@@ -21,3 +21,6 @@ CONFIGS/getPDF.jsp
 
 base_datos_5g_tfg.pkl
 base_datos_5g_tfg.pkl
+
+.env
+.env
