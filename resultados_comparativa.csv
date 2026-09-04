@@ -1,0 +1,1000 @@
+metodo,repeticion,tiempo_s,exito,error_sintactico,error_coherencia,notas
+sin_rag_cag,1,51.21,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere atención a muchos detalles. Aquí te presento los tres archivos de configuración (`gnb.yaml`, `ue.yaml`, `docker-compose.yaml`) junto con las configuraciones mínimas para Open5GS y un script para añadir el suscriptor, cumpliendo con todos tus requisitos.
+
+---
+
+### Búsqueda RAG para SST
+
+**Consulta:** ""Valor SST estandarizado para eMBB con latencias sub-10ms para aplicaciones de seguridad vial.""
+
+**Resultado RAG:**
+Según el estándar **3GPP TS 23.501, Tabla 5.15.2-1**, el valor estandarizado de Slice/Service Type (SST) para **eMBB (Enhanced Mobile Broadband)** es **1**.
+Aunque las aplicaciones de seguridad vial con latencias sub-10ms a menudo se asocian con requisitos de URLLC (Ultra-Reliable Low Latency Communications) o V2X dedicados, la solicitud especifica ""eMBB"" como la categoría principal. Un SST=1 puede ser utilizado para eMBB con configuraciones QoS específicas que soporten requisitos de baja latencia. Si se quisiera un URLLC puro, el SST sería 2. Para V2X, existen SSTs dedicados como 22 (del 3GPP TS 23.285). Sin embargo, adhiriéndonos al ""eMBB"" solicitado, **SST=1** es el valor apropiado.
+
+---
+
+### Archivos de Configuración
+
+Asegúrate de tener la siguiente estructura de directorios:
+
+```
+.
+├── docker-compose.yaml
+├── gnb.yaml
+├── ue.yaml
+├── open5gs-config/
+│   ├── amf.yaml
+│   ├── smf.yaml
+│   └── upf.yaml
+└── setup-subscriber.sh
+```
+
+---
+
+#### 1. `gnb.yaml` (Configuración del gNB)
+
+Este archivo configura el gNB (usando `srsRAN` en este caso) con los parámetros de radio, PLMN, SST y las opciones de ZMQ y monitoreo.
+
+```yaml
+# gnb.yaml
+# Configuración del gNB srsRAN
+
+amf:
+  amf_address: 10.53.1.2         # Dirección IP del contenedor AMF de Open5GS
+  amf_port: 38412
+  pcap_enable_ip_filter: 10.53.1.2 # Captura PCAP solo para el tráfico N2 con el AMF
+
+mcc: 001                         # Mobile Country Code (PLMN)
+mnc: 01                          # Mobile Network Code (PLMN)
+tac: 7                     "
+sin_rag_cag,2,35.11,False,True,False,"¡Excelente! Vamos a configurar un entorno O-RAN E2E completo siguiendo tus especificaciones.
+
+He realizado la búsqueda RAG para el valor SST. Según 3GPP TS 23.501, la Tabla 5.15.2.2-1 (""Standardized S-NSSAIs"") define `SST=1` para ""Enhanced Mobile Broadband"" (eMBB). Aunque las aplicaciones de seguridad vial con latencias sub-10ms se asocian más comúnmente con URLLC (SST=2) o V2X (SST=4), la solicitud especifica ""SST estandarizado correspondiente a eMBB"" para este escenario. Por lo tanto, utilizaremos `SST=1`.
+
+A continuación, se generan los tres archivos de configuración necesarios: `gnb.yaml`, `ue.yaml` y `docker-compose.yaml`.
+
+---
+
+### 1. `gnb.yaml` (Configuración del gNB)
+
+Este archivo configura el gNB, incluyendo la información de la red, radio, ZMQ, métricas y el SST.
+
+```yaml
+# gnb.yaml
+# Configuración del gNB para el entorno O-RAN E2E
+
+log_config:
+  log_level: info
+  log_filename: /var/log/oai_gnb.log
+  max_size: 10M
+  max_files: 5
+
+plmn_list:
+  - mcc: ""001""
+    mnc: ""01""
+    tac: 7
+
+slices:
+  tai_slice_support_list:
+    - sst: 1
+      # Extraído de 3GPP TS 23.501, Tabla 5.15.2.2-1 para eMBB genérico.
+      # Aunque la baja latencia (sub-10ms) y la seguridad vial sugieren URLLC (SST=2) o V2X (SST=4),
+      # el requisito explícito de eMBB (SST=1) es priorizado aquí.
+      sd: ""0x000001"" # Un valor de SD de ejemplo.
+
+radio_config:
+  band: 3
+  dl_arfcn: 368500
+  dl_bandwidth_mhz: 10
+  ul_bandwidth_mhz: 10 # Se asume simetría para UL
+  scs_khz: 15
+  # La tasa de muestreo IQ de 11.52 Msps es impuesta por el entorno ZMQ.
+  # Asegura compatibilidad con el ancho de banda y SCS seleccionados.
+  iq_sampling_rate_hz: 11520000 # 11.52 Msps
+
+zmq_config:
+  # El gNB actuará como servidor ZMQ, enlazando el puerto 2000.
+  # El UE se conectará al IP del gNB en el puerto 2001.
+  tx_port: 2000 # Puerto para transmisión del gNB (DL)
+  rx_port: 2001 # Puerto para recepción del gNB (UL)
+  # Para ZMQ, el gNB es el ""servidor"", y los puertos se ""cruzan"".
+  # El gNB escucha en 2000 (D"
+sin_rag_cag,3,41.95,False,True,False,"¡Excelente! Vamos a configurar un entorno O-RAN E2E completo, cumpliendo con todos los requisitos especificados.
+
+Primero, la búsqueda en la base de datos RAG para el SST.
+
+---
+
+### Búsqueda RAG: Valor SST para eMBB y latencia sub-10ms
+
+**Consulta:** ""SST estandarizado para eMBB, aplicaciones de seguridad vial, latencia sub-10ms""
+
+**Resultado RAG:**
+El estándar 3GPP TS 23.501, Sección 5.15.3, define los tipos de servicio/slice (SST) estandarizados.
+Para **eMBB (enhanced Mobile Broadband)**, el valor SST estandarizado es **1**.
+Aunque las aplicaciones de seguridad vial con latencias sub-10ms suelen estar más alineadas con los requisitos de URLLC (SST=2), la solicitud explícitamente pide el SST *correspondiente a eMBB*. Por lo tanto, usaremos SST=1.
+
+**Fuente:** 3GPP TS 23.501, Sección 5.15.3 ""Standardized S-STs"".
+
+---
+
+Ahora, procedemos a generar los tres archivos de configuración:
+
+### 1. `gnb.yaml` (Configuración del gNB)
+
+Este archivo configura el gNB para conectarse al core 5G, la radio virtual ZMQ y los parámetros de la celda NR.
+
+```yaml
+# gnb.yaml
+# Configuración del gNB srsRAN para un entorno O-RAN E2E
+# ----------------------------------------------------
+
+# Configuración del PLMN (Public Land Mobile Network)
+# MCC: Mobile Country Code (001)
+# MNC: Mobile Network Code (01)
+# TAC: Tracking Area Code (7)
+plmn_id:
+  mcc: 001
+  mnc: 01
+  tac: 7
+
+# Configuración de la dirección IP del AMF (Access and Mobility Management Function)
+# El gNB se conectará a esta IP para el plano de control (NGAP)
+amf_addr: 10.53.1.2
+
+# Dirección IP local del gNB para la interfaz N2 (plano de control con AMF)
+# y la interfaz N3 (plano de usuario con UPF - aunque configurado por SMF, el gNB usa esta IP)
+# Se asume que 10.53.1.1 es la IP del contenedor gNB dentro de la red Docker.
+n2_bind_addr: 10.53.1.1
+n3_bind_addr: 10.53.1.1
+
+# Configuración de las slices soportadas por el TAI (Tracking Area Identity)
+# Se incluye el SST para eMBB (valor 1) como se extrajo del estándar 3GPP TS 23.501"
+sin_rag_cag,4,53.24,False,True,False,"¡Excelente! Aquí tienes la configuración completa para tu entorno O-RAN E2E, incluyendo el valor SST estandarizado y todos los parámetros solicitados.
+
+---
+
+### Búsqueda RAG para SST (Slice/Service Type)
+
+Según la especificación 3GPP TS 23.501, Tabla 5.15.3-1 ""Standardized S-NSSAIs"":
+*   **SST 1:** Corresponde a **eMBB** (enhanced Mobile Broadband).
+
+Aunque la descripción de tu caso de uso (""aplicaciones de seguridad vial con latencias sub-10ms"") podría sugerir uRLLC (SST 2) o V2X (SST 4), la solicitud explícita es para el valor SST *estandarizado correspondiente a eMBB*. Por lo tanto, usaremos `SST = 1` y añadiremos un comentario en el gNB indicando la fuente. La baja latencia requerida se lograría mediante la configuración de QoE (Quality of Experience) dentro de este slice eMBB, posiblemente con perfiles de PDU Session de baja latencia.
+
+---
+
+### Archivos de Configuración
+
+Asegúrate de crear la siguiente estructura de directorios:
+
+```
+.
+├── docker-compose.yaml
+├── gnb.conf
+├── ue.conf
+├── open5gs-config/
+│   ├── amf.yaml
+│   ├── smf.yaml
+│   └── upf.yaml
+└── pcap/
+```
+
+#### 1. `gnb.conf` (Configuración del gNB)
+
+Este archivo configura el gNB, incluyendo la interfaz de radio ZMQ, la conexión al AMF, el slice soportado y la recopilación de métricas.
+
+```yaml
+# gnb.conf
+
+# gNB ID, must be unique within the PLMN
+gNB_ID = 0x19;
+
+# gNB Name
+gNB_NAME = ""oai-gNB"";
+
+# PLMN Information
+plmn_list = (
+    {
+        mcc = ""001"";
+        mnc = ""01"";
+        mnc_len = 2; # Length of MNC, 2 for ""01""
+        tac = 7;
+        # List of supported S-NSSAIs
+        tai_slice_support_list = (
+            {
+                sst = 1; # eMBB (Enhanced Mobile Broadband)
+                # Extracted from 3GPP TS 23.501, Table 5.15.3-1 ""Standardized S-NSSAIs""
+            }
+        );
+    }
+);
+
+# AMF connection
+amf_ip_address = ""10.53.1.2"";
+amf_port = 38412;
+ng_interface_name = ""eth0"";
+
+# NR Cell Configuration
+nr_cell = (
+    {
+        # Physical Cell ID
+        phy_cell_id = 0;
+
+        # Fr"
+sin_rag_cag,5,35.8,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere precisión. Aquí tienes los tres archivos de configuración (`gnb.yaml`, `ue.yaml`, y `docker-compose.yaml`) con todos los parámetros especificados, incluyendo la búsqueda del SST y las configuraciones de red, radio, ZMQ, autenticación y monitoreo.
+
+---
+
+### Búsqueda RAG para el valor SST:
+
+**Consulta:** SST estandarizado para eMBB, requerido para aplicaciones de seguridad vial con latencias sub-10ms.
+
+**Resultado (Simulado de base de datos RAG):**
+Según la especificación **3GPP TS 23.501, Sección 5.15.3.1, Tabla 5.15.3.1-1**, los valores estandarizados de SST (Slice/Service Type) son:
+*   **SST 1**: `eMBB` (enhanced Mobile Broadband)
+*   SST 2: `uRLLC` (ultra-Reliable Low-Latency Communication)
+*   SST 3: `MIoT` (Massive Internet of Things)
+*   SST 4: `V2X` (Vehicle-to-Everything)
+*   SST 5: `HS_eMBB` (High-Security eMBB)
+
+Para eMBB, el valor estándar es **SST 1**. Aunque la aplicación requiere latencias sub-10ms (lo que a menudo se asocia con URLLC), la solicitud especifica explícitamente ""eMBB"". Se puede configurar un slice eMBB para soportar requisitos de baja latencia a nivel de QoS.
+
+---
+
+### 1. Archivo de Configuración del gNB (`gnb.yaml`)
+
+```yaml
+# gnb.yaml
+# Configuración del gNB srsRAN para un entorno O-RAN E2E
+enb_id: 0x00001
+mcc: 001
+mnc: 01
+tac: 7
+
+# Configuración de los Slices soportados
+slices:
+  - sst: 1 # Standardized SST for eMBB
+    # Referencia: 3GPP TS 23.501, Section 5.15.3.1, Table 5.15.3.1-1
+    # Aunque la aplicación es de seguridad vial con latencia <10ms, se solicitó explícitamente eMBB.
+    # El SD (Slice Differentiator) se omite ya que no fue especificado y no es obligatorio para SST 1.
+    tai_slice_support_list:
+      - sst: 1 # Standardized SST for eMBB, value extracted from RAG database.
+
+# Configuración de la Interfaz NGAP (Control Plane con AMF)
+ngap:
+  bind_addr: 10.53.1.1 # IP del contenedor gNB
+  amf_addr: 10.53.1.2 # IP del contenedor AMF (Open5GS Core)
+
+# Configuraci"
+sin_rag_cag,6,42.15,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo como este es fundamental para pruebas y desarrollo. Aquí están los tres archivos de configuración necesarios para srsRAN Project (para gNB y UE) y Open5GS (vía docker-compose), siguiendo todas tus especificaciones.
+
+---
+
+### Búsqueda RAG para SST
+
+Para el requisito de ""eMBB, requerido para aplicaciones de seguridad vial con latencias sub-10ms"", aunque eMBB generalmente se asocia con `SST=1`, la especificación de ""seguridad vial"" y ""latencias sub-10ms"" apunta a características de URLLC (Ultra-Reliable Low Latency Communications) o servicios V2X críticos.
+
+Consultando 3GPP TS 23.501, Tabla 5.6.9-1 (Standardized Slice/Service Type - SST):
+*   `SST=1`: eMBB (enhanced Mobile Broadband)
+*   `SST=5`: Critical Communications (incluyendo URLLC)
+*   `SST=81`: Enhanced V2X (eV2X)
+
+Dado que se menciona ""eMBB"" pero se enfatiza ""seguridad vial"" y ""latencias sub-10ms"", el valor `SST=5` (Critical Communications/URLLC) es el más apropiado ya que satisface mejor las exigencias de baja latencia y fiabilidad para la seguridad vial, incluso si la categoría general se inició como ""eMBB"". Es una configuración común para servicios de comunicación terrestre críticos.
+
+---
+
+### 1. Archivo de Configuración del gNB (`gnb.yaml`)
+
+```yaml
+# gnb.yaml
+# Configuración del gNB (srsgnb)
+
+# --- General ---
+# Nombre del gNB
+srsran_project_version: 23.11 # Versión de srsRAN Project usada para generar esta configuración
+config_id: gnb_standard_e2e
+# logging:
+#   filename: gnb.log
+#   all_level: debug
+
+# --- Core Network (AMF) ---
+amf:
+  amf_address: 10.53.1.2       # IP del contenedor Open5GS AMF
+  bind_addr: 10.53.1.1         # IP del contenedor gNB para tráfico NGAP
+  # Puerto NGAP estándar
+  # port: 38412
+
+# --- Slice Configuration ---
+# Soporte de S-NSSAI
+tai_slice_support_list:
+  - sst: 5 # Valor SST extraído de 3GPP TS 23.501, Tabla 5.6.9-1, para ""Critical Communications"", que satisface los requisitos de baja latencia (sub-10ms) para aplicaciones"
+sin_rag_cag,7,45.89,False,True,False,"¡Excelente! Aquí tienes los tres archivos de configuración necesarios para establecer tu entorno O-RAN E2E completo, siguiendo todas tus especificaciones.
+
+He tenido en cuenta la peculiaridad de la tasa de muestreo ZMQ de 11.52 Msps. En srsRAN, la tasa de muestreo suele derivarse de `n_fft * scs`. Para un `scs` de 15 kHz y una tasa de muestreo de 11.52 Msps, el `n_fft` resultante sería 768, que no es una potencia de 2 y, por lo tanto, no es un valor estándar de `n_fft` utilizado directamente por srsRAN para la modulación OFDM. Sin embargo, dado que has especificado explícitamente que esta tasa de muestreo ""es obligatoria"" para el entorno ZMQ, la configuraremos directamente en los perfiles ZMQ del gNB y el UE. srsRAN gestionará internamente la adaptación para que el transporte ZMQ utilice esa tasa. El número de PRBs para 10 MHz con 15 kHz SCS es 52, que sí es estándar.
+
+---
+
+### 1. `gnb.yaml` (Configuración del gNB)
+
+Este archivo configura el gNB con los parámetros de radio, la interfaz O-RAN E2, la conexión al AMF, el soporte de slice y las métricas.
+
+```yaml
+# gnb.yaml
+# Configuración del gNB para srsRAN
+#
+# Entorno O-RAN E2E completo para un caso de comunicacion terrestre estandar.
+# Soporte de slice eMBB (SST 1) para aplicaciones de seguridad vial con latencias sub-10ms.
+# PLMN: MCC 001, MNC 01, TAC 7.
+# Radio: Banda 3, dl_arfcn 368500, 10 MHz BW (52 PRB), SCS 15 kHz.
+# ZMQ: Puertos 2000 (RX) y 2001 (TX), tasa de muestreo 11.52 Msps.
+# AMF: 10.53.1.2.
+# Métricas: RLC y Scheduler DU activadas (periodo 400ms).
+# Capturas: NGAP activadas.
+
+amf:
+  addr: 10.53.1.2 # Dirección IP del AMF (Open5GS Core)
+
+enb:
+  # Configuración general del gNB
+  e2_setup: true # Habilitar configuración E2 para O-RAN
+  cu_to_du: F1AP # Tipo de interfaz entre CU y DU (para split 7-2, asumiendo CU/DU en el mismo nodo para esta configuración simplificada de srsRAN)
+  n_rf_ports: 1 # Número de puertos RF
+
+cell:
+  # Configuración de la celda NR
+  dl_arfcn: 368500 # ARFCN de downlink para Banda"
+sin_rag_cag,8,45.55,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere atención a muchos detalles. He generado los tres archivos de configuración (`gnb.yaml`, `ue.yaml` y `docker-compose.yaml`) siguiendo tus especificaciones.
+
+---
+
+### Búsqueda RAG para SST:
+
+Para **eMBB** (enhanced Mobile Broadband) con requisitos de baja latencia para aplicaciones de seguridad vial (aunque típicamente uRLLC sería más adecuado para latencias sub-10ms, se ha especificado eMBB), el valor **SST (Slice/Service Type)** estandarizado según 3GPP TS 23.501, Sección 5.15.2.2, Tabla 5.15.2.2-1 es:
+
+*   **SST = 1** (para eMBB)
+
+Lo aplicaremos en el `gnb.yaml` con el comentario requerido.
+
+---
+
+### 1. Archivo de Configuración del gNB (`gnb.yaml`)
+
+Este archivo configura el gNB, incluyendo su conexión con el AMF, la red PLMN, la banda de radio, los parámetros de ancho de banda y SCS, la interfaz ZMQ, las métricas y la captura PCAP.
+
+```yaml
+# gnb.yaml
+# Configuración del gNB para un entorno O-RAN E2E completo
+
+# Configuración del Core de Open5GS (AMF)
+amf:
+  amf_ip_address: 10.53.1.2 # IP del AMF de Open5GS
+  amf_port: 38412 # Puerto estándar para N2
+
+# Direcciones IP del gNB para GTP-C y NRT (User Plane)
+gtpc:
+  gtpc_ip_address: 10.53.1.1 # IP del gNB para el plano de control (GTP-C)
+nrt:
+  nrt_ip_address: 10.53.1.1 # IP del gNB para el plano de usuario (GTP-U)
+
+# Configuración de la PLMN (Public Land Mobile Network)
+plmn:
+  mcc: 001 # Mobile Country Code
+  mnc: 01  # Mobile Network Code
+  tac: 7   # Tracking Area Code
+
+# Lista de S-NSSAI (Single Network Slice Selection Assistance Information) soportados
+# Para eMBB requerido para aplicaciones de seguridad vial con latencias sub-10ms
+tai_slice_support_list:
+  - sst: 1 # SST=1: Enhanced Mobile Broadband (eMBB)
+    # Valor extraído de 3GPP TS 23.501, Sección 5.15.2.2, Tabla 5.15.2.2-1
+
+# Configuración de la interfaz de radio (DU)
+rrc_du:
+  band: 3       # Banda 3
+  dl_arfcn: 368500 # Downlink ARFCN (para 1.8 GHz)
+  ul_arfcn: 351500 # Uplink ARFCN (para 1"
+sin_rag_cag,9,37.96,False,True,False,"¡Excelente! Para configurar un entorno O-RAN E2E completo con los requisitos especificados, generaremos tres archivos de configuración: `gnb.yaml` para el gNB de UERANSIM, `ue.yaml` para el UE de UERANSIM y `docker-compose.yaml` para orquestar Open5GS y UERANSIM.
+
+Primero, realizaremos la búsqueda RAG para el valor SST.
+
+---
+**Búsqueda RAG para SST estandarizado (eMBB, seguridad vial, latencia sub-10ms):**
+
+*   **Consulta:** ""Standardized SST for eMBB road safety sub-10ms latency 3GPP""
+*   **Resultado (simulado de base de datos RAG):**
+    Según 3GPP TS 23.501, Tabla 5.15.3-1, los valores de SST (Slice/Service Type) estandarizados incluyen:
+    *   **SST=1:** Para eMBB (enhanced Mobile Broadband).
+    *   **SST=2:** Para URLLC (Ultra-Reliable Low Latency Communications).
+    *   **SST=3:** Para mMTC (massive Machine Type Communications).
+    *   **SST=4:** Para V2X (Vehicle-to-Everything) Communication.
+
+    Aunque la latencia sub-10ms y la seguridad vial podrían sugerir URLLC (SST=2) o V2X (SST=4), la solicitud especifica **eMBB** para aplicaciones de seguridad vial. Por lo tanto, el SST estandarizado correspondiente a **eMBB** es **1**. Este SST es adecuado para servicios de banda ancha mejorada que pueden ser utilizados en aplicaciones de seguridad vial donde la baja latencia es una característica deseada, aunque no la principal garantía de URLLC.
+
+---
+
+Ahora, procedamos con la configuración de los archivos.
+
+---
+
+### 1. `docker-compose.yaml`
+
+Este archivo orquestará todos los contenedores necesarios: los componentes de Open5GS (AMF, SMF, UDM, AUSF, UPF, WebUI) y los contenedores de UERANSIM para el gNB y el UE.
+
+```yaml
+version: '3.8'
+
+services:
+  # Open5GS Core Network Components
+  open5gs-amf:
+    image: open5gs/open5gs
+    container_name: open5gs-amf
+    command: [""./bin/open5gs-amfd""]
+    volumes:
+      - ./open5gs/amf.yaml:/opt/open5gs/etc/open5gs/amf.yaml
+    networks:
+      o-ran-net:
+        ipv4_address: 10.53.1.2 # AMF IP
+    cap_add:
+      - NET_ADMIN"
+sin_rag_cag,10,32.6,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere atención a muchos detalles. He generado los tres archivos de configuración (`gnb.yaml`, `ue.yaml`, y `docker-compose.yaml`) siguiendo tus especificaciones.
+
+**Consideraciones clave aplicadas:**
+
+1.  **SST para eMBB/URLLC con latencia sub-10ms:** Aunque mencionas eMBB, la restricción de latencia sub-10ms para seguridad vial apunta fuertemente a las características de URLLC. Según 3GPP TS 23.501, el valor estandarizado para URLLC es **SST = 2**. Este valor se ha aplicado al gNB con el comentario solicitado.
+2.  **Tasa de muestreo ZMQ de 11.52 Msps:** Para garantizar la compatibilidad con el entorno ZMQ y las configuraciones de ancho de banda y SCS dadas, se ha configurado `sample_rate_hz: 11520000` (11.52 Msps) tanto en el gNB como en el UE.
+3.  **Configuración de radio TDD:** Para simplificar y dado que solo se especificó un ARFCN, se ha asumido una configuración TDD para Band 3, utilizando el mismo ARFCN para DL y UL.
+4.  **Open5GS:** Se ha incluido un conjunto completo de componentes de Open5GS en el `docker-compose` para el core 5G.
+
+---
+
+### 1. `gnb.yaml`
+
+```yaml
+# gNB Configuration for OAI
+log_config:
+  global_log_level: info
+  protocol_log_level: info
+
+flexran_config:
+  enabled: false
+
+e2_config:
+  enabled: false
+
+rcc:
+  # ZMQ Interface for virtual radio
+  radio_if_name: ""zmq""
+  zmq_port_up: 2000 # Port for UL samples (UE -> gNB)
+  zmq_port_down: 2001 # Port for DL samples (gNB -> UE)
+  # Mandatary: Compatible with 11.52 Mbps imposed by ZMQ environment
+  sample_rate_hz: 11520000
+
+network_interfaces:
+  ngap_ip_address: ""10.53.1.1"" # gNB container IP
+  gtp_ip_address: ""10.53.1.1"" # gNB container IP
+  
+  # AMF IP Address - Matches Open5GS AMF container IP
+  amf_ip_address: ""10.53.1.2""
+
+tracking_area_list:
+  - mcc: ""001""
+    mnc: ""01""
+    tac: 7
+
+slices:
+  tai_slice_support_list:
+    - sst: 2 # Standardized SST for URLLC/Low-latency (e.g., Road Safety)
+      # Extracted from 3GPP TS 23.501, Table 5.1.5-"
+sin_rag_cag,11,42.74,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere precisión en cada detalle. Utilizaremos UERANSIM como gNB y UE, y Open5GS para el core de red 5G, orquestado todo con Docker Compose.
+
+Aquí tienes los tres archivos de configuración y el script para aprovisionar el suscriptor en la base de datos de Open5GS.
+
+---
+
+**1. Base de Datos RAG: Valor SST**
+
+Para el valor SST (Slice/Service Type) estándarizado correspondiente a eMBB, nos referimos a la especificación **3GPP TS 23.501, Tabla 5.15.2-1 ""Standardised S-NSSAIs""**.
+En esta tabla, el SST estándar para eMBB (enhanced Mobile Broadband) es **1**.
+
+Aunque las aplicaciones de seguridad vial con latencias sub-10ms a menudo se asocian con URLLC (Ultra-Reliable Low Latency Communication), la solicitud especifica ""eMBB"" con esta latencia. Por lo tanto, usaremos SST=1, asumiendo que el QoS correspondiente dentro de esa porción de red (identificada por el SST=1) se configurará para cumplir con los requisitos de latencia.
+
+---
+
+**2. Archivo de Configuración del gNB (gnb.yaml)**
+
+Este archivo configurará el gNB de UERANSIM.
+
+```yaml
+# gnb.yaml
+# Configuración del gNB de UERANSIM para un entorno O-RAN E2E
+
+# Identificación del gNB
+mcc: 001
+mnc: 01
+nci: 0x00000100 # NR Cell ID (Parte del NR Identity)
+id: 1           # Identificador interno del gNB
+
+# Configuración de la zona de seguimiento (TAI)
+tac: 7
+
+# Lista de soporte de 'slices' (S-NSSAI)
+tai_slice_support_list:
+  - sst: 1
+    # SD (Slice Differentiator) se puede usar para diferenciar entre múltiples slices
+    # del mismo tipo de servicio (SST) dentro de una misma red.
+    # Aquí se usa un valor por defecto.
+    sd: 0x000001
+    # Fuente del valor SST: 3GPP TS 23.501, Tabla 5.15.2-1 ""Standardised S-NSSAIs""
+    # El SST 1 corresponde a eMBB (enhanced Mobile Broadband).
+
+# Configuración de la interfaz N2 (AMF)
+amf_addr: 10.53.1.2 # Dirección IP del contenedor AMF de Open5GS
+amf_port: 38412    # Puerto N2 estándar
+
+# Configuración de la interfaz N3 (UPF) - no es dir"
+sin_rag_cag,12,32.54,False,True,False,"¡Absolutamente! Aquí tienes los tres archivos de configuración (`gnb.yaml`, `ue.yaml` y `docker-compose.yaml`) para configurar tu entorno O-RAN E2E completo según tus especificaciones.
+
+He realizado la consulta RAG para el valor SST:
+
+*   **RAG Query:** ""Standardized SST for eMBB sub-10ms latency road safety""
+*   **Resultado de la Base de Datos RAG (3GPP TS 23.501, Table 5.15.2-1):**
+    *   `SST=1` (eMBB) es para banda ancha móvil mejorada.
+    *   `SST=2` (URLLC) es para comunicaciones de baja latencia y alta fiabilidad.
+    *   `SST=4` (V2X Communication) está específicamente diseñado para comunicaciones V2X, que inherentemente requieren baja latencia y alta fiabilidad para aplicaciones de seguridad vial.
+    *   Dado que la solicitud especifica ""eMBB"" pero con requisitos de ""latencias sub-10ms"" y ""seguridad vial"", el `SST=4` (V2X) es la opción estandarizada más apropiada que encapsula la funcionalidad de seguridad vial con baja latencia, incluso si el término ""eMBB"" en el prompt se usa para describir el *tipo* de tráfico general. Para un servicio que prioriza *seguridad vial* y *baja latencia*, V2X es el slice más adecuado.
+
+---
+
+### 1. `docker-compose.yaml`
+
+Este archivo orquesta los contenedores Docker para Open5GS (AMF, SMF, UPF), UERANSIM gNB y UERANSIM UE, configurando la red y los volúmenes.
+
+```yaml
+version: '3.8'
+
+services:
+  open5gs-amf:
+    image: open5gs/open5gs
+    container_name: open5gs-amf
+    command: [""open5gs-amfd""]
+    networks:
+      open5gs-ueransim-net:
+        ipv4_address: 10.53.1.2 # IP del AMF, coincidirá con la dirección AMF
+    volumes:
+      - ./open5gs-config:/open5gs/config # Opcional: para montar configs personalizadas si fuera necesario
+    healthcheck:
+      test: [""CMD-SHELL"", ""pgrep amfd > /dev/null || exit 1""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  open5gs-smf:
+    image: open5gs/open5gs
+    container_name: open5gs-smf
+    command: [""open5gs-smfd""]
+    networks:
+      open5gs-ueransim-net:
+    volumes:
+    "
+sin_rag_cag,13,36.33,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere atención a muchos detalles. Vamos a generar los tres archivos de configuración (`gnb.yaml`, `ue.yaml`, y `docker-compose.yaml`) siguiendo tus especificaciones.
+
+Primero, la búsqueda RAG para el valor SST.
+
+### Búsqueda RAG: SST estandarizado para eMBB con latencia sub-10ms
+
+Según la especificación **3GPP TS 23.501, Sección 5.15.2.2 (Standardized NSSAIs)**:
+
+*   **SST = 1:** Se utiliza para servicios **eMBB** (enhanced Mobile Broadband).
+*   **SST = 2:** Se utiliza para servicios **uRLLC** (ultra-Reliable Low Latency Communication).
+
+Aunque las aplicaciones de seguridad vial con latencias sub-10ms a menudo se asocian con uRLLC, la solicitud especifica ""el valor SST estandarizado correspondiente a eMBB, requerido para aplicaciones de seguridad vial con latencias sub-10ms"". Esto implica que estamos usando un servicio eMBB que *busca* cumplir con bajos requisitos de latencia. Por lo tanto, el SST estándar para eMBB es **1**. Los requisitos de baja latencia se lograrían a través de la configuración del QoS Profile asociado a este slice, como el 5QI (por ejemplo, un 5QI de 80 o 82 podría ser adecuado).
+
+Aplicaremos `sst: 1` con el comentario correspondiente.
+
+### Consideración importante sobre la tasa de muestreo ZMQ (11.52 Mbps)
+
+Has especificado la Banda 3 con dl_arfcn 368500, ancho de banda de 10 MHz y SCS de 15 kHz, y que estos parámetros deben ser compatibles con una tasa de muestreo de 11.52 Mbps impuesta por el entorno ZMQ.
+
+En UERANSIM, la tasa de muestreo ZMQ se deriva de los parámetros de radio (`bandwidth`, `subcarrierSpacing`). Para 10 MHz de ancho de banda y 15 kHz de SCS (que corresponde a 52 bloques de recursos, NRB=52), la tasa de muestreo *típica* en UERANSIM sería de **7.68 Msps** (Mega-muestras por segundo), no 11.52 Msps.
+
+Si el entorno ZMQ *externo* exige estrictamente 11.52 Mbps, podría haber una incompatibilidad directa con los parámetros de radio especificados para UERANSIM, a menos que "
+sin_rag_cag,14,44.59,False,True,False,"¡Excelente! Vamos a configurar un entorno O-RAN E2E completo siguiendo tus especificaciones.
+
+**1. Consulta RAG para SST de eMBB:**
+
+Para aplicaciones de seguridad vial con latencias sub-10ms, aunque la latencia sub-10ms típicamente se asocia con uRLLC (SST 2), la solicitud especifica ""eMBB"". Según el estándar **3GPP TS 23.501, Sección 5.15.3, Tabla 5.15.3-1**, el valor estandarizado para **eMBB (enhanced Mobile Broadband)** es **SST 1**. Utilizaremos este valor.
+
+**2. Generación de Archivos de Configuración:**
+
+Aquí están los tres archivos de configuración necesarios:
+
+---
+
+### `gnb.yaml` (Configuración del gNB OAI)
+
+```yaml
+# gNB OAI configuration for a standard terrestrial communication scenario
+#
+# Este archivo configura el gNB (Base Station) para interactuar con la red
+# core (Open5GS) y el UE (User Equipment) a través de una interfaz de radio virtual ZMQ.
+
+# OAI Log configuration
+log_config:
+  global_log_level: info
+  global_log_verbosity: 0
+  log_fifo_enabled: false
+  log_fifo_path: /tmp/oai_log_fifo
+
+# gNB configuration section
+gnb:
+  # General gNB parameters
+  enb_name: oai-gnb
+  enb_id: 0x01 # gNB ID (e.g., 20 bits for gNB ID)
+
+  # Tracking Area Identity (TAI)
+  tai:
+    plmn_list:
+      - mcc: 001 # Mobile Country Code (MCC)
+        mnc: 01  # Mobile Network Code (MNC)
+        mnc_len: 2 # Length of MNC
+    tac: 7   # Tracking Area Code (TAC)
+    # Lista de tipos de rebanadas/servicios soportados (SSTs)
+    # Valor SST para eMBB, extraído de 3GPP TS 23.501, Tabla 5.15.3-1
+    tai_slice_support_list:
+      - sst: 1
+
+  # NG-AP (Next Generation Application Protocol) Interface towards AMF
+  amf_list:
+    - amf_name: open5gs-amf
+      amf_ipv4_address: 10.53.1.2 # IP address of the AMF container
+
+  # E1 interface configuration (if applicable, often not used for simple E2E)
+  e1_list: []
+
+  # F1 interface configuration (if applicable)
+  f1_list: []
+
+  # RLC and Scheduler Metrics (for real-time monitoring of user plane latency)
+  mac_rlc_metrics:
+    # Enable MA"
+sin_rag_cag,15,32.83,False,True,False,"¡Claro! Aquí tienes la configuración completa para un entorno O-RAN E2E con gNB, UE y Docker Compose, siguiendo todas tus especificaciones.
+
+He realizado la búsqueda del valor SST:
+
+*   **SST estándar para eMBB:** El valor estándar para eMBB (enhanced Mobile Broadband) es `1`.
+*   **Referencia estándar:** Este valor se define en el estándar **3GPP TS 23.501, Sección 5.15.2 ""SST and SD definition""**. Aunque las aplicaciones de seguridad vial con latencias sub-10ms a menudo se asocian con uRLLC (SST `2`), la solicitud especifica ""eMBB"", por lo que usamos el SST `1` para eMBB, añadiendo la nota de baja latencia en el comentario.
+
+---
+
+### 1. Archivo de Configuración del gNB (srsgnb.yaml)
+
+```yaml
+# srsgnb.yaml
+amf:
+  amf_address: 10.53.1.2 # IP de la AMF (core Open5GS)
+  amf_port: 38412
+  bind_address: 10.53.1.1 # IP del gNB
+  force_ipv4: true
+  slice_list: # Slices soportados por el gNB
+    - s_nssai_list:
+        - sst: 1 # SST para eMBB
+          sd: 000001 # SD arbitrario
+
+enb: # Información general del gNB
+  id: 0x1 # ID único del gNB
+  phy_cell_id: 1 # ID de célula física (PCI)
+  gNB_name: srsRAN_gNB
+  rrc_en_nr_cell_type: nr
+
+mac:
+  # Configuración MAC... (se pueden añadir más parámetros si son necesarios)
+  # Por ejemplo, para configurar un scheduler específico o prioridades.
+
+pcap:
+  ngap:
+    filename: ngap.pcap # Archivo de captura PCAP para NGAP
+    level: info
+
+du_fapi: # Configuración de la interfaz O-RAN FAPI para DU
+  # Normalmente, FAPI es para una DU separada. Para srsRAN, se refiere a la parte interna de DU.
+  # No se requiere una configuración explícita de FAPI para una única instancia de gNB.
+
+radio:
+  active: true
+  carrier_freq_hz: 1847500000 # Frecuencia central de downlink para Band 3, dl_arfcn 368500
+  n_prb: 52 # Número de Physical Resource Blocks para 10 MHz BW, 15 kHz SCS (3GPP TS 38.104, Table 5.3.2-1)
+  scs: 15 # Subcarrier Spacing en kHz
+  prach_conf_idx: 15 # Índice de configuración PRACH (típico)
+  ssb_pbch_power: -20 # Potencia de la "
+sin_rag_cag,16,44.93,False,True,False,"¡Excelente! Configurar un entorno O-RAN E2E completo requiere atención al detalle en varios componentes. Vamos a generar los tres archivos de configuración (`gnb.yaml`, `ue.yaml`, `docker-compose.yaml`) y los archivos de configuración de Open5GS necesarios para cumplir con todos tus requisitos.
+
+---
+
+### **Paso 1: Búsqueda del Valor SST Estandarizado**
+
+Según la base de datos RAG (y el estándar 3GPP TS 23.501, Tabla 5.6.7-1), el valor SST (Slice/Service Type) para servicios que requieren *latencias ultrabajas y alta fiabilidad*, como los de seguridad vial (URLLC - Ultra-Reliable Low Latency Communication), es **SST=2**.
+
+Aunque la solicitud menciona ""eMBB"", las condiciones de ""seguridad vial"" y ""latencias sub-10ms"" son características distintivas de URLLC. Por lo tanto, priorizaremos la funcionalidad de baja latencia y alta fiabilidad necesaria para la seguridad vial sobre la designación literal de eMBB al seleccionar el SST. Un servicio eMBB genérico (SST=1) no garantizaría por sí mismo latencias sub-10ms.
+
+---
+
+### **Paso 2: Archivos de Configuración**
+
+Para ejecutar esta configuración, necesitarás la siguiente estructura de directorios:
+
+```
+.
+├── docker-compose.yaml
+├── gnb.yaml
+├── ue.yaml
+└── open5gs
+    ├── configs
+    │   ├── amf.yaml
+    │   ├── smf.yaml
+    │   └── upf.yaml
+    └── webui
+        └── configs
+            └── open5gs.yaml # Opcional, si usas la webui
+```
+
+**1. `gnb.yaml` (Configuración del gNB)**
+
+```yaml
+# Configuración del gNB para srsRAN
+# =================================
+
+# Sección de configuración del gNB
+enb:
+  # Identificador del gNB
+  enb_id: 0x00001
+
+  # Configuración del PLMN (Public Land Mobile Network)
+  mcc: ""001""
+  mnc: ""01""
+  tac: 7
+
+  # Direcciones IP del core
+  amf_ip_address: 10.53.1.2 # Dirección IP del AMF de Open5GS
+  ngap_bind_addr: 10.53.1.1 # Dirección IP del gNB en la red Docker
+  gtpu_bind_addr: 10.53.1.1 # Dirección IP del gNB para el plano de usuario
+
+# Configuración del radio
+rru:
+  # Banda de operación
+  band: 3"
+sin_rag_cag,17,39.73,False,True,False,"¡Claro! Aquí tienes la configuración completa para tu entorno O-RAN E2E, incluyendo los tres archivos requeridos (`gnb.conf`, `ue.conf`, `docker-compose.yml`), con todas las especificaciones solicitadas.
+
+---
+
+### Búsqueda RAG para SST (Slice/Service Type)
+
+Para aplicaciones de seguridad vial con latencias sub-10ms, aunque algunas funciones críticas podrían caer bajo URLLC (SST 2 o 3), el requisito explícito es ""eMBB con latencias sub-10ms"". El valor estandarizado de SST para **eMBB (enhanced Mobile Broadband)** es **1**.
+
+*   **SST:** 1
+*   **Fuente:** 3GPP TS 23.501 ""System Architecture for the 5G System (5GS)"", Sección 5.15.2 ""Slice/Service Type (SST) values"".
+
+---
+
+### 1. Archivo de Configuración del gNB (`gnb.conf`)
+
+Este archivo configura el gNB de OpenAirInterface (OAI) con los parámetros de radio, la interfaz ZMQ, la conexión al Core 5G y las métricas.
+
+```yaml
+# gnb.conf
+# Configuración del gNB para OAI
+# -----------------------------------------------------------------------------------------------------------------
+
+# gNB parameters
+eutra_mode = ""no""; # This is a 5G NR gNB, so EUTRA mode is not enabled.
+
+gNBs = (
+  {
+    gNB_ID = 0x00000001; # Unique gNB identifier
+    gNB_name = ""oai-gnb"";
+
+    # PLMN list configuration
+    plmn_list = (
+      {
+        mcc = ""001"";
+        mnc = ""01"";
+        mnc_len = 2; # Length of MNC (e.g., 01 -> 2 digits)
+        tac = 7; # Tracking Area Code
+        # S-NSSAI list for this PLMN
+        snssai_list = (
+          {
+            sst = 1;
+            # sd = 0x000001; # Optional Slice Differentiator. Not explicitly requested, so using default or omitting.
+          }
+        );
+      }
+    );
+
+    # TAI Slice Support List (TS 23.501, Section 5.15.2)
+    # SST 1 corresponds to eMBB, suitable for enhanced Mobile Broadband applications,
+    # including those requiring sub-10ms latencies for road safety communication.
+    tai_slice_support_list = (
+      {
+        sst = 1; # SST: 1 (eMBB) - extraído de 3GPP TS 23.501, Secci"
+sin_rag_cag,18,30.94,False,True,False,"¡Absolutamente! Aquí tienes los tres archivos de configuración necesarios para establecer un entorno O-RAN E2E completo, incluyendo el gNB, el UE y la configuración de Docker Compose para Open5GS y srsRAN, con todos los parámetros especificados:
+
+---
+
+### 1. Archivo de Configuración del gNB (srsRAN_gNB)
+
+Guarda esto como `gnb.yaml` en una carpeta `config/` (ej: `config/gnb.yaml`):
+
+```yaml
+# Configuración del gNB para srsRAN
+# ==================================
+
+# Sección de la red de acceso (RAN)
+amf_address: 10.53.1.2          # Dirección IP del AMF de Open5GS
+amf_port: 38412                 # Puerto N2 del AMF (estándar)
+
+# Identificadores de la red
+plmn_id:
+  mcc: 001                      # Mobile Country Code
+  mnc: 01                       # Mobile Network Code (puede ser 2 o 3 dígitos, ""01"" es 2)
+  tac: 7                        # Tracking Area Code
+
+# Configuración de la célula 5G NR
+cell:
+  nr_cell_id: 1                 # Identificador de la célula NR
+  ssb:
+    periodicity: ms20           # Periodicidad del SSB (Synchronization Signal Block)
+    offset_ssb_subcarrier: 0    # Offset de subportadora del SSB
+    offset_ssb_scs: 0           # Offset del SCS del SSB
+  band: 3                       # Banda NR (Banda 3)
+  dl_arfcn: 368500              # Absolute Radio Frequency Channel Number para el downlink (Banda 3, 1.8 GHz)
+  bandwidth: 10                 # Ancho de banda en MHz (10 MHz)
+  scs: 15                       # Subcarrier Spacing en kHz (15 kHz)
+  prach_conf_idx: 160           # Índice de configuración PRACH (común para 15kHz SCS, 10MHz BW)
+  pucch_conf_idx: 0             # Índice de configuración PUCCH (valor por defecto)
+
+# Soporte de Slices (SST)
+tai_slice_support_list:
+  - sst: 1                      # Valor SST estandarizado para eMBB, según 3GPP TS 23.501, Sección 5.15.2, Tabla 5.15.2-1
+
+# Interfaz ZMQ para la comunicación con el UE virtual
+zmq:
+  bind_address: 0.0.0.0         # Dirección de enlace para ZMQ
+  gNB_port: 2000                # Pue"
+sin_rag_cag,19,35.55,False,True,False,"¡Excelente! Aquí tienes la configuración completa para un entorno O-RAN E2E con gNB, UE y Open5GS, siguiendo tus requisitos detallados.
+
+---
+
+### **1. RAG Lookup para SST (eMBB, sub-10ms, seguridad vial)**
+
+Para aplicaciones de seguridad vial con latencias sub-10ms, aunque la solicitud menciona ""eMBB"", el requisito de latencia estricta (sub-10ms) es característico de las Comunicaciones Ultra-Confiables y de Baja Latencia (uRLLC).
+
+*   **Búsqueda RAG (simulada):** ""Standardized SST value for URLLC 3GPP TS 23.501""
+*   **Resultado RAG:** Según 3GPP TS 23.501, Tabla 5.15.3-1 ""Standardized S-NSSAI values"", el valor **SST = 2** está estandarizado para **uRLLC**. Este es el más adecuado para aplicaciones de seguridad vial que requieren latencias críticas.
+
+Aplicaremos `sst: 2` en la configuración del gNB.
+
+---
+
+### **2. Archivos de Configuración**
+
+Asegúrate de tener la siguiente estructura de directorios:
+
+```
+.
+├── config
+│   ├── gnb.yaml
+│   ├── ue.yaml
+│   └── open5gs
+│       ├── amf.yaml
+│       ├── smf.yaml
+│       └── upf.yaml
+└── docker-compose.yaml
+```
+
+#### **2.1. `config/gnb.yaml`**
+
+```yaml
+#
+# gNB configuration for srsRAN Project
+#
+# Configuration for a 5G gNB connected via ZMQ to a UE,
+# and to Open5GS AMF.
+#
+
+amf:
+  amf_ip: 10.53.1.2     # IP address of the AMF (Open5GS AMF container)
+  amf_port: 38412       # N2 port
+  ngap_ip: 10.53.1.1    # IP address of the gNB for N2 interface
+  gtp_ip: 10.53.1.1     # IP address of the gNB for N3 interface
+
+pcap:
+  ngap_enabled: true    # Enable NGAP PCAP capture
+  #path: ""/tmp/ngap.pcap"" # Uncomment and specify a path if saving to a host volume
+
+plmn:
+  mcc: ""001""            # Mobile Country Code
+  mnc: ""01""             # Mobile Network Code
+  tac: 7                # Tracking Area Code
+
+tai_slice_support_list:
+  - sst: 2              # 3GPP TS 23.501, Table 5.15.3-1: SST=2 para uRLLC (Ultra-Reliable Low Latency Communications),
+                        # adecuado para aplicaciones de seguridad vial que requieren latenc"
+sin_rag_cag,20,35.17,False,True,False,"¡Excelente! Configurar un entorno O-RAN de extremo a extremo con requisitos tan específicos es un gran ejercicio. Aquí están los archivos de configuración solicitados, incorporando todos los detalles.
+
+---
+
+### **Paso 1: Consulta RAG para el valor SST**
+
+Basado en la base de datos RAG (y la especificación 3GPP TS 23.501, Tabla 5.15.3-1 ""Standardized S-NSSAI values""), el valor estandarizado de SST para **eMBB (enhanced Mobile Broadband)** es **1**. Aunque la aplicación de seguridad vial con latencias sub-10ms puede sugerir URLLC, el requisito primario especifica eMBB. Para lograr bajas latencias con eMBB, se pueden usar configuraciones de radio y QoS específicas, pero el SST fundamental sigue siendo eMBB.
+
+---
+
+### **1. Archivo de Configuración del gNB (gnb.yaml)**
+
+```yaml
+# gnb.yaml
+# Configuración del gNB para srsRAN Project
+
+# Configuración de la red PLMN
+mcc: 001
+mnc: 01
+tac: 7
+
+# Lista de Slices TAI soportados
+tai_slice_support_list:
+  - sst: 1 # Valor SST estandarizado para eMBB (3GPP TS 23.501, Tabla 5.15.3-1)
+    sd: 000000 # Un SD por defecto, si no se especifica uno, o 0xFFFFFF para indicar ""no usado""
+
+# Configuración de la interfaz AMF (Core de Open5GS)
+amf_ip: 10.53.1.2 # IP del contenedor AMF de Open5GS
+amf_port: 38412 # Puerto NGAP por defecto
+
+# Configuración del transceptor virtual ZMQ
+# gNB Tx (tr_06) se conectará al puerto Rx del UE (tr_07)
+tr_06:
+  remote_addr: 10.53.1.1 # IP del propio gNB para bind ZMQ
+  remote_port: 2000 # Puerto de transmisión del gNB
+  
+# gNB Rx (tr_07) se conectará al puerto Tx del UE (tr_06)
+tr_07:
+  remote_addr: 10.53.1.1 # IP del propio gNB para bind ZMQ
+  remote_port: 2001 # Puerto de recepción del gNB
+
+# Parámetros de la interfaz de radio (NR)
+nr_cell:
+  band: 3 # Banda de frecuencia 3
+  dl_arfcn: 368500 # ARFCN de downlink para Banda 3
+  bandwidth: 10_000_000 # Ancho de banda de 10 MHz
+  scs: 15 # Subcarrier Spacing de 15 kHz
+  
+  # La tasa de muestreo debe ser compatible con 11.52 Msps (11.52 * 10^6)
+  # Este es un va"
+sistema_propuesto,1,41.41,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,2,69.65,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,3,37.83,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,4,52.73,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,5,11.17,False,False,True,"[ERROR API] 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+sistema_propuesto,6,9.24,False,False,True,"[ERROR API] 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+sistema_propuesto,7,10.05,False,False,True,"[ERROR API] 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+sistema_propuesto,8,10.83,False,False,True,"[ERROR API] 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+sistema_propuesto,9,42.41,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,10,10.05,False,False,True,"[ERROR API] 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+sistema_propuesto,1,38.38,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,2,57.45,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,3,61.34,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,4,41.2,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,5,41.27,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,6,40.43,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,7,41.59,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,8,45.94,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,9,46.69,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,10,49.76,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,11,43.53,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,12,45.18,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,13,53.59,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,14,39.91,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,15,41.37,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,16,37.58,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,17,43.84,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,18,42.21,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,19,43.59,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)
+sistema_propuesto,20,38.48,True,False,False,Exportado correctamente (revisar coherencia manualmente si procede)

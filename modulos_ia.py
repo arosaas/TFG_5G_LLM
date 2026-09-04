@@ -1,3 +1,7 @@
+# -- ARQUITECTURA HIBRIDA CAG+RAG PARA CONFIGURACIONES 5G -- #
+# Autor: Alejandro R. Sarabia
+# Fecha 06/2026
+
 import os
 import time
 import pickle
@@ -40,7 +44,7 @@ def cargar_cag(rutas, client, modelo):
                     parts=[types.Part.from_text(text="Inicializando contexto CAG base.")]
                 )
             ],
-            ttl="3600s" 
+            ttl="7200s" 
         )
     )
     print(f"  [✓] Caché creada con éxito en la nube: {cache.name}")

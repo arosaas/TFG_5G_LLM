@@ -1,3 +1,7 @@
+# -- ARQUITECTURA HIBRIDA CAG+RAG PARA CONFIGURACIONES 5G -- #
+# Autor: Alejandro R. Sarabia
+# Fecha 06/2026
+
 ## -- Construcción prompt del sistema-- ##
 
 SYSTEM_PROMPT_TEMPLATE = """
