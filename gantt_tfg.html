@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrama de Gantt — TFG LLM O-RAN</title>
+<style>
+  body { font-family: "Monospace", serif; background: #fff; padding: 2rem; color: #222; }
+  .gantt-title { font-size: 26px; font-weight: 500; color: #555; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .task-name { font-size: 24px; color: #555; width: 220px; flex-shrink: 0; text-align: right; padding-right: 10px; line-height: 1.3; }
+  .axis-row { display: flex; margin-left: 230px; margin-bottom: 8px; position: relative; height: 18px; }
+</style>
+</head>
+<body>
+
+<div style="font-family: Monospace, serif; padding: 1.5rem 0;">
+  <div style="font-size: 20px; font-weight: 500; color: #555; margin-bottom: 1.5rem; letter-spacing: 0.02em;">
+    Planificación TFG — Integración de LLM en arquitecturas O-RAN 5G
+  </div>
+  <div id="gantt-container"></div>
+</div>
+
+<script>
+const START = new Date('2025-09-25');
+const END   = new Date('2026-07-01');
+const TOTAL = END - START;
+
+const phases = [
+  {
+    label: 'Fase 1. Planteamiento y propuesta',
+    color: { bg: '#EEEDFE', border: '#534AB7', text: '#3C3489' },
+    tasks: [
+      { name: 'Planteamiento del proyecto', start: '2025-09-25', end: '2025-10-10' },
+      { name: 'Aceptación del proyecto',    start: '2025-10-11', end: '2025-10-16' },
+    ]
+  },
+  {
+    label: 'Fase 2. Estudio y revisión de la información',
+    color: { bg: '#E1F5EE', border: '#0F6E56', text: '#085041' },
+    tasks: [
+      { name: 'Estudio del estado del arte',        start: '2025-10-17', end: '2025-10-29' },
+      { name: 'Estudio de fundamentos teóricos',    start: '2025-10-30', end: '2025-11-11' },
+      { name: 'Revisión de la bibliografía',        start: '2025-11-12', end: '2025-11-18' },
+    ]
+  },
+  {
+    label: 'Fase 3. Diseño e implementación',
+    color: { bg: '#E6F1FB', border: '#185FA5', text: '#0C447C' },
+    tasks: [
+      { name: 'Análisis de la infraestructura',   start: '2026-02-06', end: '2026-02-10' },
+      { name: 'Diseño e impl. red O-RAN',          start: '2026-02-11', end: '2026-02-14' },
+      { name: 'Diseño e impl. de la solución',     start: '2026-02-15', end: '2026-03-12' },
+      { name: 'Impl. mecanismos de validación',    start: '2026-03-13', end: '2026-03-17' },
+    ]
+  },
+  {
+    label: 'Fase 4. Pruebas y validación de resultados',
+    color: { bg: '#FAEEDA', border: '#854F0B', text: '#633806' },
+    tasks: [
+      { name: 'Planteamiento de las pruebas', start: '2026-03-18', end: '2026-03-20' },
+      { name: 'Experimentación del sistema',  start: '2026-03-21', end: '2026-04-23' },
+    ]
+  },
+  {
+    label: 'Fase 5. Redacción de la memoria',
+    color: { bg: '#FAECE7', border: '#993C1D', text: '#712B13' },
+    tasks: [
+      { name: 'Redacción de la memoria',                        start: '2026-04-24', end: '2026-06-08' },
+      { name: 'Revisión de errores',                            start: '2026-06-09', end: '2026-06-16' },
+      { name: 'Revisión final',                                 start: '2026-06-17', end: '2026-06-20' },
+      { name: 'Entrega definitiva y preparación de la defensa', start: '2026-06-21', end: '2026-07-01' },
+    ]
+  }
+];
+
+function pct(dateStr) {
+  return ((new Date(dateStr) - START) / TOTAL) * 100;
+}
+
+const months = [];
+let d = new Date(START);
+d.setDate(1);
+while (d <= END) {
+  months.push(new Date(d));
+  d.setMonth(d.getMonth() + 1);
+}
+
+const container = document.getElementById('gantt-container');
+
+const axisRow = document.createElement('div');
+axisRow.style.cssText = 'display:flex; margin-left:230px; margin-bottom:8px; position:relative; height:18px;';
+months.forEach(m => {
+  const left = pct(m.toISOString().slice(0,10));
+  const lbl = document.createElement('div');
+  lbl.style.cssText = `position:absolute; left:${left}%; font-size:12px; color:#888; transform:translateX(-50%); white-space:nowrap;`;
+  lbl.textContent = m.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
+  axisRow.appendChild(lbl);
+});
+container.appendChild(axisRow);
+
+phases.forEach(phase => {
+  const block = document.createElement('div');
+  block.style.cssText = 'margin-bottom: 1.2rem;';
+
+  const phaseLabel = document.createElement('div');
+  phaseLabel.style.cssText = `font-size:16px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:${phase.color.text}; margin-bottom:5px; margin-left:230px; padding-bottom:3px; border-bottom: 1.5px solid ${phase.color.border};`;
+  phaseLabel.textContent = phase.label;
+  block.appendChild(phaseLabel);
+
+  phase.tasks.forEach(task => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; align-items:center; gap:10px; margin-bottom:4px;';
+
+    const nameEl = document.createElement('div');
+    nameEl.style.cssText = 'font-size:14px; color:#555; width:220px; flex-shrink:0; text-align:right; padding-right:10px; line-height:1.3;';
+    nameEl.textContent = task.name;
+
+    const barWrap = document.createElement('div');
+    barWrap.style.cssText = 'flex:1; position:relative; height:20px;';
+
+    months.forEach(m => {
+      const gl = document.createElement('div');
+      const lp = pct(m.toISOString().slice(0,10));
+      gl.style.cssText = `position:absolute; left:${lp}%; top:0; bottom:0; width:0.5px; background:#e5e5e5;`;
+      barWrap.appendChild(gl);
+    });
+
+    const left = pct(task.start);
+    const width = pct(task.end) - left;
+
+    const bar = document.createElement('div');
+    bar.style.cssText = `position:absolute; left:${left}%; width:${Math.max(width,0.8)}%; height:100%; border-radius:0; background:${phase.color.bg}; border:1px solid ${phase.color.border}; box-sizing:border-box;`;
+
+    barWrap.appendChild(bar);
+    row.appendChild(nameEl);
+    row.appendChild(barWrap);
+    block.appendChild(row);
+  });
+
+  container.appendChild(block);
+});
+</script>
+</body>
+</html>

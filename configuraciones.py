@@ -6,10 +6,17 @@ load_dotenv()
 ## -- Configuración API -- ##
 
 API_KEY = os.getenv("API_KEY", "")
-MODEL_GEN = "gemini-2.5-flash"
-MODEL_EMB = "gemini-embedding-001"
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()  # gemini, ollama, etc.
 
-## -- Configuración rutas de entrada -- ## 
+## -- Configuración modelo LLM -- ##
+
+MODEL_GEN = os.getenv("MODEL_GEN", "gemini-2.5-flash")
+MODEL_EMB = os.getenv("MODEL_EMB", "gemini-embedding-001")
+
+# For Ollama or other local models
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
+## -- Configuración rutas de entrada -- ##
 
 RUTAS_CAG = [
     "/home/alejandroro/TFG_5G_LLM/CONFIGS/docker-compose.yml",
